@@ -10,6 +10,7 @@ Game::Game()
       initialOpenNumber(0),
       initialTotalPlace(NUMrow * NUMcol),
       initialSafePlace(initialTotalPlace - NUMmine),
+      firstClick(true),
       field(),
       gameRenderer(UI_AREA_HEIGHT),
       gameUI(NUMcol * 50, NUMrow * 50 + UI_AREA_HEIGHT, UI_AREA_HEIGHT)
@@ -26,9 +27,10 @@ Game::Game()
 // ゲームの状態をリセットする関数
 void Game::resetGame() {
     field = Field(); //Fieldオブジェクトを再構築しリセット
-    field.minePlace(); //新しく地雷配置
+    //field.minePlace(); //新しく地雷配置
     OpenNumber = initialOpenNumber; //OpenNumberをリセット(0 に戻す)
     state = GameState::Playing; //状態をPlayingに戻す
+    firstClick=true;
 }
 
 void Game::Run() {
@@ -46,18 +48,22 @@ void Game::Run() {
             int x = mousePos.x / tileSize;
             int y = (mousePos.y - UI_AREA_HEIGHT) / tileSize;
 
-            // 左クリックの処理
+           // 左クリックの処理
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 // UI エリアのクリックの処理
                 if (mousePos.y >= 0 && mousePos.y < UI_AREA_HEIGHT) {
                     if (state == GameState::GameOver || state == GameState::Win || state == GameState::Ready) {
-                        if (gameUI.isRestartButtonClicked(mousePos)) {
+                        if  (gameUI.isRestartButtonClicked(mousePos)) {
                             resetGame(); // ゲームをリセットして開始
                         }
                     }
                 }else if (state == GameState::Playing) {
                     // クリック座標が有効な範囲内かチェック
                     if (x >= 0 && x < NUMcol && y >= 0 && y < NUMrow) {
+                        if(firstClick){
+                            field.minePlace(y,x);
+                            firstClick=false;
+                        }
                         if (field.Flagged(y, x)) {
                             continue;
                         } else if (field.Opened(y, x)) {

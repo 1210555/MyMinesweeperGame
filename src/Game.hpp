@@ -20,16 +20,13 @@ private:
     int initialOpenNumber;// OpenNumber の初期値 (0)
     int initialTotalPlace;// ボード全体のマス数
     int initialSafePlace;// 安全なマスの総数
+    bool firstClick;//最初にクリックしたかどうか(これが真となった後に地雷配置)
 
 public:
     Game();
     void Run();
     void resetGame();
 
-private:
-    // イベント処理のヘルパー関数 (Run() から切り出すとコードが整理される)
-    void handleLeftClick(int x, int y, int tileSize);
-    void handleRightClick(int x, int y, int tileSize);
 };
 
 #endif

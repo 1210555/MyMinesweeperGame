@@ -1,6 +1,7 @@
 #ifndef FIELD_HPP 
 #define FIELD_HPP
 #include <vector>
+#include <cmath>
 #include "Constants.hpp"
 
 class Field {
@@ -11,7 +12,7 @@ private:
 
 public:
     Field(); 
-    void minePlace(); // 地雷の配置
+    void minePlace(int avoidRow,int avoidCol); // 地雷の配置
     int Count(int x, int y) const; // 地雷数カウント
     bool Mined(int x, int y) const; // 地雷判定 
     void Open(int x, int y); // マスを開く

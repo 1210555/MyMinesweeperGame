@@ -1,9 +1,9 @@
 #include "GameRenderer.hpp"
 #include <iostream>
 
-GameRenderer::GameRenderer(int offset) : uiOffset(offset) {
+GameRenderer::GameRenderer(int offset) : uiOffset(offset){
     // テクスチャファイルへパスを定義
-    std::map<std::string, std::string> files = {
+    std::map<std::string, std::string> files={
         {"white", "resources/GroundWhite.jpg"},
         {"flag",  "resources/Flag2.png"},
         {"mine","resources/Mine.jpg"},
@@ -35,26 +35,26 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
             }
             window.draw(tile);
 
-            if (currentState == GameState::GameOver) {
-                if (field.Mined(i, j)) {
+            if(currentState == GameState::GameOver){
+                if(field.Mined(i, j)){
                     sprite.setTexture(textures["boom"]);
                     sprite.setScale(static_cast<float>(tileSize) / textures["boom"].getSize().x,
                                     static_cast<float>(tileSize) / textures["boom"].getSize().y);
                     sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                     window.draw(sprite);
-                } else if (opened[i][j] && field.Count(i,j) > 0) {
+                }else if(opened[i][j] && field.Count(i,j) > 0){
                     sf::Text text;
                     text.setFont(font);
                     text.setString(std::to_string(field.Count(i, j)));
                     text.setCharacterSize(24);
                     // 数字の色
-                    if (field.Count(i, j) == 1){
+                    if(field.Count(i, j) == 1){
                         text.setFillColor(sf::Color::Blue);
                     }
-                    else if (field.Count(i, j) == 2){
+                    else if(field.Count(i, j) == 2){
                         text.setFillColor(sf::Color::Green);
                     }
-                    else if (field.Count(i, j) >= 3){
+                    else if(field.Count(i, j) >= 3){
                         text.setFillColor(sf::Color::Red);
                     }
                     
@@ -62,24 +62,21 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                     text.setOrigin(textBounds.left + textBounds.width / 2.0f, textBounds.top + textBounds.height / 2.0f);
                     text.setPosition(static_cast<float>(j * tileSize + tileSize / 2.0f), static_cast<float>(i * tileSize + tileSize / 2.0f + uiOffset));
                     window.draw(text);
-                }
-                else if (field.Mined(i, j) && !opened[i][j] && !flagged[i][j]) { // 踏んでない地雷は地雷画像
+                }else if(field.Mined(i, j) && !opened[i][j] && !flagged[i][j]){ // 踏んでない地雷は地雷画像
                     sprite.setTexture(textures["mine"]);
-                    sprite.setScale(static_cast<float>(tileSize) / textures["mine"].getSize().x,
-                                    static_cast<float>(tileSize) / textures["mine"].getSize().y);
+                    sprite.setScale(static_cast<float>(tileSize) / textures["mine"].getSize().x,static_cast<float>(tileSize) / textures["mine"].getSize().y);
                     sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                     window.draw(sprite);
                 }
-                else if (flagged[i][j]) {
+                else if(flagged[i][j]){
                     sprite.setTexture(textures["flag"]);
-                    sprite.setScale(static_cast<float>(tileSize) / textures["flag"].getSize().x,
-                                    static_cast<float>(tileSize) / textures["flag"].getSize().y);
+                    sprite.setScale(static_cast<float>(tileSize) / textures["flag"].getSize().x,static_cast<float>(tileSize) / textures["flag"].getSize().y);
                     sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                     window.draw(sprite);
                 }
 
-            } else if (currentState == GameState::Win) {
-                if (!field.Mined(i, j)) {
+            }else if(currentState == GameState::Win){
+                if (!field.Mined(i, j)){
                     int count = field.Count(i, j);
                     if (count > 0) { // 数字が1以上の場合は数字を表示
                         sf::Text text;
@@ -101,32 +98,32 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                         text.setPosition(static_cast<float>(j * tileSize + tileSize / 2.0f), static_cast<float>(i * tileSize + tileSize / 2.0f + uiOffset));
                         window.draw(text);
                     }
-                } else {
+                }else{
                     sprite.setTexture(textures["mine"]); 
                     sprite.setScale(static_cast<float>(tileSize) / textures["mine"].getSize().x,static_cast<float>(tileSize) / textures["mine"].getSize().y);
                     sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                     window.draw(sprite);
                 }
-            } else { //PlayingかReadyのとき
-                if (flagged[i][j]) { // フラグ表示
+            }else{ //PlayingかReadyのとき
+                if(flagged[i][j]){ // フラグ表示
                     sprite.setTexture(textures["flag"]);
                     sprite.setScale(static_cast<float>(tileSize) / textures["flag"].getSize().x,static_cast<float>(tileSize) / textures["flag"].getSize().y);
                     sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                     window.draw(sprite);
-                } else if (opened[i][j]) { 
+                }else if(opened[i][j]){ 
                     int count = field.Count(i, j);
-                    if (count > 0) { // 周囲の地雷数が1以上の場合は数字を表示
+                    if(count > 0){ // 周囲の地雷数が1以上の場合は数字を表示
                         sf::Text text;
                         text.setFont(font);
                         text.setString(std::to_string(count));
                         text.setCharacterSize(24);
-                        if (field.Count(i, j) == 1){
+                        if(field.Count(i, j) == 1){
                             text.setFillColor(sf::Color::Blue);
                         }
-                        else if (field.Count(i, j) == 2){
+                        else if(field.Count(i, j) == 2){
                             text.setFillColor(sf::Color::Green);
                         }
-                        else if (field.Count(i, j) >= 3){
+                        else if(field.Count(i, j) >= 3){
                             text.setFillColor(sf::Color::Red);
                         }
                         

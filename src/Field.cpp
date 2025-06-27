@@ -1,6 +1,7 @@
 #include "Field.hpp" 
 #include <cstdlib> 
-#include <ctime> 
+#include <ctime>
+#include <cmath> 
 
 Field::Field() {
     mine = std::vector<std::vector<bool>>(NUMrow, std::vector<bool>(NUMcol, false));
@@ -8,28 +9,32 @@ Field::Field() {
     frag = std::vector<std::vector<bool>>(NUMrow, std::vector<bool>(NUMcol, false));
 }
 
-void Field::minePlace() {
-    int k = 0;
-    while (k < NUMmine) {
+void Field::minePlace(int avoidRow,int avoidCol){
+    int placed = 0;
+    while (placed < NUMmine){
         int mineRow = rand() % NUMrow;
         int mineCol = rand() % NUMcol;
-        if (!mine[mineRow][mineCol]) {
-            mine[mineRow][mineCol] = true;
-            k++;
+        if (mine[mineRow][mineCol]) {
+            continue;
         }
+        if(abs(mineRow-avoidRow)<=1&&abs(mineCol-avoidCol)<=1){
+            continue;
+        }
+        mine[mineRow][mineCol] = true;
+        placed++;
     }
 }
 
-int Field::Count(int x, int y) const {
+int Field::Count(int x, int y)const{
     int AroundMineCount = 0;
     int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
     int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-    for (int k = 0; k < 8; k++) {
+    for (int k = 0; k < 8; k++){
         int nx = x + dx[k];
         int ny = y + dy[k];
         if (nx >= 0 && nx < NUMrow && ny >= 0 && ny < NUMcol) {
-            if (mine[nx][ny]) {
+            if (mine[nx][ny]){
                 AroundMineCount++;
             }
         }
@@ -95,3 +100,4 @@ int Field::autoRelease(int x, int y) {
     }
     return OpenCount;
 }
+
