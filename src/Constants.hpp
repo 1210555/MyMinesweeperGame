@@ -5,11 +5,20 @@
 #define NUMcol 32//横の長さ
 #define NUMmine 60//総地雷数
 //ゲーム状態の分岐
-enum class GameState {
+enum class GameState{
     Playing,
     GameOver,
     Win,
-    Ready
+    Ready,
+    MainMenu,
+    PauseMenu
+};
+
+enum class Level{
+    BeforeChoosing,
+    Easy,
+    Normal,
+    Difficult
 };
 
 #endif

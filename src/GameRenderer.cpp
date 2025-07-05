@@ -104,7 +104,7 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                     sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                     window.draw(sprite);
                 }
-            }else{ //PlayingかReadyのとき
+            }else{ //Playingのとき
                 if(flagged[i][j]){ // フラグ表示
                     sprite.setTexture(textures["flag"]);
                     sprite.setScale(static_cast<float>(tileSize) / textures["flag"].getSize().x,static_cast<float>(tileSize) / textures["flag"].getSize().y);

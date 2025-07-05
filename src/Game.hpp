@@ -12,7 +12,8 @@ private:
     sf::Font font;           
     sf::RenderWindow window; 
     Field field;             
-    GameState state;         
+    GameState state;//ゲーム状態の管理
+    Level level;//難易度の状態管理         
     GameRenderer gameRenderer;
     GameUI gameUI;            
 

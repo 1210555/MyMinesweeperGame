@@ -6,7 +6,8 @@ Game::Game()
     : UI_AREA_HEIGHT(70),//UI部分の高さ
       font(),             // sf::Font をデフォルト構築 (ロードは後で行う)
       window(sf::VideoMode(NUMcol * 50, NUMrow * 50 + UI_AREA_HEIGHT), "MineSweeper"),
-      state(GameState::Ready), // 初期状態を Ready に設定
+      state(GameState::MainMenu), //ゲーム初期設定
+      level(Level::BeforeChoosing),//難易度初期設定
       initialOpenNumber(0),
       initialTotalPlace(NUMrow * NUMcol),
       initialSafePlace(initialTotalPlace - NUMmine),
@@ -15,7 +16,7 @@ Game::Game()
       gameRenderer(UI_AREA_HEIGHT),
       gameUI(NUMcol * 50, NUMrow * 50 + UI_AREA_HEIGHT, UI_AREA_HEIGHT)
 {
-    if (!font.loadFromFile("resources/arial.ttf")) {
+    if(!font.loadFromFile("resources/arial.ttf")){
         std::cerr << "Error loading font: resources/arial.ttf" << std::endl;
         window.close();
         exit(EXIT_FAILURE); // フォントロード失敗時は終了
@@ -25,21 +26,20 @@ Game::Game()
 }
 
 // ゲームの状態をリセットする関数
-void Game::resetGame() {
+void Game::resetGame(){
     field = Field(); //Fieldオブジェクトを再構築しリセット
-    //field.minePlace(); //新しく地雷配置
     OpenNumber = initialOpenNumber; //OpenNumberをリセット(0 に戻す)
     state = GameState::Playing; //状態をPlayingに戻す
     firstClick=true;
 }
 
-void Game::Run() {
+void Game::Run(){
     int tileSize = 50; //タイルサイズ(ゲーム全体で共通の定数)
     sf::Event event;
 
-    while (window.isOpen()) {
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+    while(window.isOpen()){
+        while (window.pollEvent(event)){
+            if (event.type == sf::Event::Closed){
                 window.close();
             }
 
@@ -49,15 +49,38 @@ void Game::Run() {
             int y = (mousePos.y - UI_AREA_HEIGHT) / tileSize;
 
            // 左クリックの処理
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+            if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left){
+                if(state==GameState::MainMenu){
+                    if(gameUI.isEasyButtonClicked(mousePos)){
+
+                        std::cout<<"easy"<<std::endl;
+                    }else if(gameUI.isNormalButtonClicked(mousePos)){
+
+                        std::cout<<"normal"<<std::endl;
+                    }else if(gameUI.isDifficultButtonClicked(mousePos)){
+
+                        std::cout<<"difficult"<<std::endl;
+                    }
+                }
                 // UI エリアのクリックの処理
-                if (mousePos.y >= 0 && mousePos.y < UI_AREA_HEIGHT) {
-                    if (state == GameState::GameOver || state == GameState::Win || state == GameState::Ready) {
-                        if  (gameUI.isRestartButtonClicked(mousePos)) {
+                if(mousePos.y >= 0 && mousePos.y < UI_AREA_HEIGHT){
+                    if(state == GameState::GameOver || state == GameState::Win || state == GameState::Ready){
+                        if  (gameUI.isRestartButtonClicked(mousePos)){
                             resetGame(); // ゲームをリセットして開始
                         }
+                    }else if(state==GameState::Playing){
+                        if(gameUI.isMenuButtonClicked(mousePos)){
+                            state=GameState::PauseMenu;
+                        }
                     }
-                }else if (state == GameState::Playing) {
+                }else if(state==GameState::PauseMenu){
+                    if(gameUI.isContinueButtonClicked(mousePos)){
+                        state=GameState::Playing;
+                    }else if(gameUI.isFinishButtonClicked(mousePos)){
+                        state=GameState::MainMenu;
+                    }
+                }
+                else if(state == GameState::Playing){
                     // クリック座標が有効な範囲内かチェック
                     if (x >= 0 && x < NUMcol && y >= 0 && y < NUMrow) {
                         if(firstClick){
@@ -91,8 +114,10 @@ void Game::Run() {
             }
         }
         window.clear(sf::Color::Black);
-        if (state == GameState::Playing || state == GameState::GameOver || state == GameState::Win) {
+        if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win){
             gameRenderer.display(window, tileSize, state, font, field, field.getOpen(), field.getFlag());
+        }else if(state==GameState::PauseMenu){
+
         }
         gameUI.Draw(window, state);
         window.display();
