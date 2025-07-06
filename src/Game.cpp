@@ -7,7 +7,7 @@ Game::Game()
       font(),             // sf::Font をデフォルト構築 (ロードは後で行う)
       window(sf::VideoMode(NUMcol * 50, NUMrow * 50 + UI_AREA_HEIGHT), "MineSweeper"),
       state(GameState::MainMenu), //ゲーム初期設定
-      level(Level::BeforeChoosing),//難易度初期設定
+      level(LevelState::BeforeChoosing),//難易度初期設定
       initialOpenNumber(0),
       initialTotalPlace(NUMrow * NUMcol),
       initialSafePlace(initialTotalPlace - NUMmine),
@@ -52,14 +52,14 @@ void Game::Run(){
             if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left){
                 if(state==GameState::MainMenu){
                     if(gameUI.isEasyButtonClicked(mousePos)){
-
+                        level=LevelState::Easy;
                         std::cout<<"easy"<<std::endl;
                     }else if(gameUI.isNormalButtonClicked(mousePos)){
 
                         std::cout<<"normal"<<std::endl;
-                    }else if(gameUI.isDifficultButtonClicked(mousePos)){
+                    }else if(gameUI.isHardButtonClicked(mousePos)){
 
-                        std::cout<<"difficult"<<std::endl;
+                        std::cout<<"Hard"<<std::endl;
                     }
                 }
                 // UI エリアのクリックの処理
@@ -114,7 +114,7 @@ void Game::Run(){
             }
         }
         window.clear(sf::Color::Black);
-        if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win){
+        if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win||state==GameState::MainMenu){
             gameRenderer.display(window, tileSize, state, font, field, field.getOpen(), field.getFlag());
         }else if(state==GameState::PauseMenu){
 

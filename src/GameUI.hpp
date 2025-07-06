@@ -24,8 +24,8 @@ class GameUI {
         sf::Text easyButtonText;
         sf::RectangleShape normalButtonShape;
         sf::Text normalButtonText;
-        sf::RectangleShape difficultButtonShape;
-        sf::Text difficultButtonText;
+        sf::RectangleShape hardButtonShape;
+        sf::Text hardButtonText;
         int windowWidth;
         int windowHeight;
         int uiOffset;
@@ -41,7 +41,7 @@ class GameUI {
     bool isFinishButtonClicked(const sf::Vector2i& mousePos) const;
     bool isEasyButtonClicked(const sf::Vector2i& mousePos) const;
     bool isNormalButtonClicked(const sf::Vector2i& mousePos) const;
-    bool isDifficultButtonClicked(const sf::Vector2i& mousePos) const;
+    bool isHardButtonClicked(const sf::Vector2i& mousePos) const;
 };
 
 #endif

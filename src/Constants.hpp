@@ -14,11 +14,11 @@ enum class GameState{
     PauseMenu
 };
 
-enum class Level{
+enum class LevelState{
     BeforeChoosing,
     Easy,
     Normal,
-    Difficult
+    Hard
 };
 
 #endif

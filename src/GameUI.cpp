@@ -27,25 +27,25 @@ GameUI::GameUI(int windowWidth, int windowHeight, int offset): windowWidth(windo
     menuButtonShape.setPosition(static_cast<float>(windowWidth - 10 - menuButtonShape.getSize().x),static_cast<float>(uiOffset / 2.0f - menuButtonShape.getSize().y / 2.0f));
 
     easyButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
-    easyButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    easyButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー（数字が大きいほど白） 
     easyButtonShape.setOrigin(easyButtonShape.getSize().x / 2.0f,easyButtonShape.getSize().y / 2.0f-60.0f);
     easyButtonShape.setOutlineThickness(2);
-    easyButtonShape.setOutlineColor(sf::Color::Red);
-    easyButtonShape.setPosition(windowWidth/2.0f,windowHeight/2.0f-150.0f-uiOffset);
+    easyButtonShape.setOutlineColor(sf::Color::Green);
+    easyButtonShape.setPosition(windowWidth/2.0f,windowHeight/2.0f-170.0f-uiOffset);
 
     normalButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
-    normalButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    normalButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
     normalButtonShape.setOrigin(normalButtonShape.getSize() / 2.0f);
     normalButtonShape.setOutlineThickness(2);
     normalButtonShape.setOutlineColor(sf::Color::White);
     normalButtonShape.setPosition(windowWidth/2.0f,windowHeight/2.0f-uiOffset);
 
-    difficultButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
-    difficultButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
-    difficultButtonShape.setOrigin(difficultButtonShape.getSize().x / 2.0f,difficultButtonShape.getSize().y / 2.0f+60.0f);
-    difficultButtonShape.setOutlineThickness(2);
-    difficultButtonShape.setOutlineColor(sf::Color::Green);
-    difficultButtonShape.setPosition(windowWidth/2.0f,windowHeight/2.0f+150.0f-uiOffset);
+    hardButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
+    hardButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
+    hardButtonShape.setOrigin(hardButtonShape.getSize().x / 2.0f,hardButtonShape.getSize().y / 2.0f+60.0f);
+    hardButtonShape.setOutlineThickness(2);
+    hardButtonShape.setOutlineColor(sf::Color::Red);
+    hardButtonShape.setPosition(windowWidth/2.0f,windowHeight/2.0f+170.0f-uiOffset);
 
 }
 
@@ -86,7 +86,7 @@ void GameUI::setFont(const sf::Font& loadedFont){
     titleText.setFont(loadedFont);
     titleText.setString("MyMineSweeper");
     titleText.setCharacterSize(60);
-    titleText.setFillColor(sf::Color::Green);
+    titleText.setFillColor(sf::Color::Black);
     sf::FloatRect titleRect = titleText.getLocalBounds();
     titleText.setOrigin(titleRect.width/2.0f,titleRect.top + titleRect.height / 2.0f);
     titleText.setPosition(windowWidth/2.0f,uiOffset/2.0f);//UI部分中央に表示
@@ -142,7 +142,7 @@ void GameUI::setFont(const sf::Font& loadedFont){
     easyButtonText.setFillColor(sf::Color::White);
     sf::FloatRect easyRect = easyButtonText.getLocalBounds();
     easyButtonText.setOrigin(easyRect.left + easyRect.width / 2.0f, easyRect.top + easyRect.height / 2.0f);
-    easyButtonText.setPosition(windowWidth/2.0f,windowHeight/2.0f-100.0f-uiOffset);
+    easyButtonText.setPosition(windowWidth/2.0f,windowHeight/2.0f-110.0f-uiOffset);
 
     normalButtonText.setFont(loadedFont);
     normalButtonText.setString("Normal");
@@ -152,13 +152,13 @@ void GameUI::setFont(const sf::Font& loadedFont){
     normalButtonText.setOrigin(normalRect.left + normalRect.width / 2.0f, normalRect.top + normalRect.height / 2.0f);
     normalButtonText.setPosition(windowWidth/2.0f,windowHeight/2.0f-uiOffset);
 
-    difficultButtonText.setFont(loadedFont);
-    difficultButtonText.setString("Difficult");
-    difficultButtonText.setCharacterSize(48);
-    difficultButtonText.setFillColor(sf::Color::White);
-    sf::FloatRect difficultRect = difficultButtonText.getLocalBounds();
-    difficultButtonText.setOrigin(difficultRect.left + difficultRect.width / 2.0f, difficultRect.top + difficultRect.height / 2.0f);
-    difficultButtonText.setPosition(windowWidth/2.0f,windowHeight/2.0f+100.0f-uiOffset);
+    hardButtonText.setFont(loadedFont);
+    hardButtonText.setString("Difficult");
+    hardButtonText.setCharacterSize(48);
+    hardButtonText.setFillColor(sf::Color::White);
+    sf::FloatRect hardRect = hardButtonText.getLocalBounds();
+    hardButtonText.setOrigin(hardRect.left + hardRect.width / 2.0f, hardRect.top + hardRect.height / 2.0f);
+    hardButtonText.setPosition(windowWidth/2.0f,windowHeight/2.0f+110.0f-uiOffset);
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState) const {
@@ -174,8 +174,8 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState) const {
         window.draw(easyButtonText);
         window.draw(normalButtonShape);
         window.draw(normalButtonText);
-        window.draw(difficultButtonShape);
-        window.draw(difficultButtonText);
+        window.draw(hardButtonShape);
+        window.draw(hardButtonText);
     }else if(currentState==GameState::PauseMenu){
         window.draw(pauseMenuText);
         window.draw(continueButtonShape);
@@ -219,7 +219,7 @@ bool GameUI::isNormalButtonClicked(const sf::Vector2i& mousePos) const {
     // マウス位置がボタンの描画領域内にあるかを判定
     return normalButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
-bool GameUI::isDifficultButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isHardButtonClicked(const sf::Vector2i& mousePos) const {
     // マウス位置がボタンの描画領域内にあるかを判定
-    return difficultButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    return hardButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }

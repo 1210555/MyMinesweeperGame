@@ -13,7 +13,7 @@ private:
     sf::RenderWindow window; 
     Field field;             
     GameState state;//ゲーム状態の管理
-    Level level;//難易度の状態管理         
+    LevelState level;//難易度の状態管理         
     GameRenderer gameRenderer;
     GameUI gameUI;            
 
