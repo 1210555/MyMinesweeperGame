@@ -3,18 +3,26 @@
 #include <ctime>
 #include <cmath> 
 
-Field::Field(){
-    mine = std::vector<std::vector<bool>>(NUMrow, std::vector<bool>(NUMcol, false));
-    open = std::vector<std::vector<bool>>(NUMrow, std::vector<bool>(NUMcol, false));
-    frag = std::vector<std::vector<bool>>(NUMrow, std::vector<bool>(NUMcol, false));
-}
+Field::Field()
+:Field(5,5,3)//仮の値で初期化
+{}
+
+Field::Field(int numRow,int numCol,int numMine)//難易度に応じたフィールドサイズ、地雷数
+  : mine (numRow,std::vector<bool>(numCol, false)),
+    open (numRow,std::vector<bool>(numCol, false)),
+    frag (numRow,std::vector<bool>(numCol, false)),
+    fieldOfNumCol(numCol),
+    fieldOfNumRow(numRow),
+    fieldOfNumMine(numMine)
+    {}
+
 
 void Field::minePlace(int avoidRow,int avoidCol){
     int placed = 0;
-    while (placed < NUMmine){
-        int mineRow = rand() % NUMrow;
-        int mineCol = rand() % NUMcol;
-        if (mine[mineRow][mineCol]) {
+    while(placed < fieldOfNumMine){
+        int mineRow = rand() % fieldOfNumRow;
+        int mineCol = rand() % fieldOfNumCol;
+        if(mine[mineRow][mineCol]){
             continue;
         }
         if(abs(mineRow-avoidRow)<=1&&abs(mineCol-avoidCol)<=1){
@@ -33,7 +41,7 @@ int Field::Count(int x, int y)const{
     for (int k = 0; k < 8; k++){
         int nx = x + dx[k];
         int ny = y + dy[k];
-        if (nx >= 0 && nx < NUMrow && ny >= 0 && ny < NUMcol){
+        if (nx >= 0 && nx < fieldOfNumRow && ny >= 0 && ny < fieldOfNumCol){
             if (mine[nx][ny]){
                 AroundMineCount++;
             }
@@ -72,7 +80,7 @@ const std::vector<std::vector<bool>>& Field::getFlag()const{
 
 int Field::autoRelease(int x,int y){
     int OpenCount = 1;
-    if (x < 0 || x >= NUMrow || y < 0 || y >= NUMcol){
+    if (x < 0 || x >= fieldOfNumRow || y < 0 || y >= fieldOfNumCol){
         return 0;
     }
     if (Opened(x, y) || Flagged(x, y)){
@@ -92,7 +100,7 @@ int Field::autoRelease(int x,int y){
     for (int k = 0; k < 8; k++){
         int nx = x + dx[k];
         int ny = y + dy[k];
-        if (nx >= 0 && nx < NUMrow && ny >= 0 && ny < NUMcol){
+        if (nx >= 0 && nx < fieldOfNumRow && ny >= 0 && ny < fieldOfNumCol){
             if (!Opened(nx, ny) && !Flagged(nx, ny)){ // オートリリース中にフラグ付きは開かない
                 OpenCount += autoRelease(nx, ny);
             }

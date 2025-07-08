@@ -9,9 +9,13 @@ private:
     std::vector<std::vector<bool>> mine;
     std::vector<std::vector<bool>> open;
     std::vector<std::vector<bool>> frag;
+    int fieldOfNumCol;
+    int fieldOfNumRow;
+    int fieldOfNumMine;
 
 public:
     Field(); 
+    Field(int numCol,int numRow,int numMine);
     void minePlace(int avoidRow,int avoidCol); // 地雷の配置
     int Count(int x, int y) const; // 地雷数カウント
     bool Mined(int x, int y) const; // 地雷判定 

@@ -7,7 +7,7 @@
 #include "Constants.hpp"
 #include "Field.hpp"
 
-class GameRenderer {
+class GameRenderer{
 private:
     std::map<std::string, sf::Texture> textures;
     //UIエリアによるY座標のずれ
@@ -24,7 +24,10 @@ public:
         const sf::Font& font,
         const Field& field,
         const std::vector<std::vector<bool>>& opened,// 開かれているマスの状態
-        const std::vector<std::vector<bool>>& flagged// フラグが立っているマスの状態
+        const std::vector<std::vector<bool>>& flagged,// フラグが立っているマスの状態
+        int numCol,
+        int numRow,
+        int numMine
     );
 };
 

@@ -12,8 +12,8 @@ class GameUI {
         sf::Text winText;
         sf::Text titleText;
         sf::Text pauseMenuText;
-        sf::RectangleShape restartButtonShape;
-        sf::Text restartButtonText;
+        sf::RectangleShape goTitleButtonShape;
+        sf::Text goTitleButtonText;
         sf::RectangleShape menuButtonShape;
         sf::Text menuButtonText;
         sf::RectangleShape continueButtonShape;
@@ -29,13 +29,17 @@ class GameUI {
         int windowWidth;
         int windowHeight;
         int uiOffset;
+        float centerX;
+        float centerY;
+
 
     public:
         GameUI(int windowWidth, int windowHeight, int offset);
 
+    void updateLayout(int newWidth,int newHeight);
     void setFont(const sf::Font& loadedFont);
     void Draw(sf::RenderWindow& window, GameState currentState) const;
-    bool isRestartButtonClicked(const sf::Vector2i& mousePos) const;
+    bool isGoTitleButtonClicked(const sf::Vector2i& mousePos) const;
     bool isMenuButtonClicked(const sf::Vector2i& mousePos) const;
     bool isContinueButtonClicked(const sf::Vector2i& mousePos) const;
     bool isFinishButtonClicked(const sf::Vector2i& mousePos) const;

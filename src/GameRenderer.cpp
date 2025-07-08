@@ -20,7 +20,7 @@ GameRenderer::GameRenderer(int offset) : uiOffset(offset){
     }
 }
 
-void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState currentState, const sf::Font& font, const Field& field, const std::vector<std::vector<bool>>& opened, const std::vector<std::vector<bool>>& flagged) {
+void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState currentState, const sf::Font& font, const Field& field, const std::vector<std::vector<bool>>& opened, const std::vector<std::vector<bool>>& flagged ,int numCol,int numRow,int numMine){
     sf::Sprite sprite;
     sf::RectangleShape tile(sf::Vector2f(static_cast<float>(tileSize - 2), static_cast<float>(tileSize - 2))); // float キャストを追加
 
@@ -35,8 +35,8 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
     }
 
     if(currentState==GameState::Playing||currentState==GameState::Win||currentState==GameState::GameOver){
-        for (int i = 0; i < NUMrow; i++){
-            for (int j = 0; j < NUMcol; j++){
+        for (int i = 0; i < numCol; i++){
+            for (int j = 0; j < numRow; j++){
                 tile.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
             
                 if(opened[i][j]){
@@ -72,7 +72,7 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                         text.setOrigin(textBounds.left + textBounds.width / 2.0f, textBounds.top + textBounds.height / 2.0f);
                         text.setPosition(static_cast<float>(j * tileSize + tileSize / 2.0f), static_cast<float>(i * tileSize + tileSize / 2.0f + uiOffset));
                         window.draw(text);
-                    }else if(field.Mined(i, j) && !opened[i][j] && !flagged[i][j]){ // 踏んでない地雷は地雷画像
+                    }else if(field.Mined(i, j) && !opened[i][j] && !flagged[i][j]){ //踏んでない地雷は地雷画像
                         sprite.setTexture(textures["mine"]);
                         sprite.setScale(static_cast<float>(tileSize) / textures["mine"].getSize().x,static_cast<float>(tileSize) / textures["mine"].getSize().y);
                         sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
@@ -102,7 +102,6 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                             else if (field.Count(i, j) >= 3){
                                 text.setFillColor(sf::Color::Red);
                             }
-                            
                             sf::FloatRect textBounds = text.getLocalBounds();
                             text.setOrigin(textBounds.left + textBounds.width / 2.0f, textBounds.top + textBounds.height / 2.0f);
                             text.setPosition(static_cast<float>(j * tileSize + tileSize / 2.0f), static_cast<float>(i * tileSize + tileSize / 2.0f + uiOffset));

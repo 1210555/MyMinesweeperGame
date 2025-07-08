@@ -3,18 +3,22 @@
 #include <cstdlib> 
 
 Game::Game()
-    : UI_AREA_HEIGHT(70),//UI部分の高さ
-      font(),             // sf::Font をデフォルト構築 (ロードは後で行う)
-      window(sf::VideoMode(NUMcol * 50, NUMrow * 50 + UI_AREA_HEIGHT), "MineSweeper"),
-      state(GameState::MainMenu), //ゲーム初期設定
-      level(LevelState::BeforeChoosing),//難易度初期設定
-      initialOpenNumber(0),
-      initialTotalPlace(NUMrow * NUMcol),
-      initialSafePlace(initialTotalPlace - NUMmine),
-      firstClick(true),
-      field(),
-      gameRenderer(UI_AREA_HEIGHT),
-      gameUI(NUMcol * 50, NUMrow * 50 + UI_AREA_HEIGHT, UI_AREA_HEIGHT)
+    :  UI_AREA_HEIGHT(70),//UI部分の高さ
+       numCol(5),
+       numRow(5),
+       numMine(5),
+       font(),             // sf::Font をデフォルト構築 (ロードは後で行う)
+       window(sf::VideoMode(1600+UI_AREA_HEIGHT, 800), "MineSweeper"),
+       state(GameState::MainMenu), //ゲーム初期設定
+       level(LevelState::BeforeChoosing),//難易度初期設定
+       openNumber(0),
+       initialTotalPlace(numCol * numRow),
+       initialSafePlace(initialTotalPlace - numMine),
+       firstClick(true),
+       ignoreOneFrameClick(false),
+       field(numCol,numRow,numMine),
+       gameRenderer(UI_AREA_HEIGHT),
+       gameUI(1600+UI_AREA_HEIGHT,800, UI_AREA_HEIGHT)
 {
     if(!font.loadFromFile("resources/arial.ttf")){
         std::cerr << "Error loading font: resources/arial.ttf" << std::endl;
@@ -23,14 +27,35 @@ Game::Game()
     }
     // ロードしたフォントを GameUI に設定
     gameUI.setFont(font);
+    gameUI.updateLayout(1600+UI_AREA_HEIGHT,800);
 }
 
 // ゲームの状態をリセットする関数
 void Game::resetGame(){
-    field = Field(); //Fieldオブジェクトを再構築しリセット
-    OpenNumber = initialOpenNumber; //OpenNumberをリセット(0 に戻す)
+    field = Field(numCol,numRow,numMine); //Fieldオブジェクトを再構築しリセット
+    openNumber = 0; //OpenNumberリセット
     state = GameState::Playing; //状態をPlayingに戻す
     firstClick=true;
+}
+void Game::gameLevel(LevelState choosenLevel){
+    if(choosenLevel==LevelState::Easy){
+        numCol=5;
+        numRow=10;
+        numMine=5;
+    }else if(choosenLevel==LevelState::Normal){
+        numCol=10;
+        numRow=20;
+        numMine=30;
+    }else if(choosenLevel==LevelState::Hard){
+        numCol=16;
+        numRow=32;
+        numMine=60;
+    }
+    initialTotalPlace=numCol*numRow;
+    initialSafePlace=initialTotalPlace - numMine;
+    window.create(sf::VideoMode(numRow*50,numCol*50+UI_AREA_HEIGHT),"MineSweeper");
+    field=Field(numCol,numRow,numMine);
+    gameUI.updateLayout(window.getSize().x,window.getSize().y);
 }
 
 void Game::Run(){
@@ -47,26 +72,39 @@ void Game::Run(){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             int x = mousePos.x / tileSize;
             int y = (mousePos.y - UI_AREA_HEIGHT) / tileSize;
+            
 
            // 左クリックの処理
             if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left){
                 if(state==GameState::MainMenu){
                     if(gameUI.isEasyButtonClicked(mousePos)){
                         level=LevelState::Easy;
-                        std::cout<<"easy"<<std::endl;
+                        resetGame();
+                        gameLevel(level);
+                        firstClick=true;;
                     }else if(gameUI.isNormalButtonClicked(mousePos)){
-
-                        std::cout<<"normal"<<std::endl;
+                        level=LevelState::Normal;
+                        resetGame();
+                        gameLevel(level);
+                        firstClick=true;
+                        ignoreOneFrameClick=true;
                     }else if(gameUI.isHardButtonClicked(mousePos)){
-
-                        std::cout<<"Hard"<<std::endl;
+                        level=LevelState::Hard;
+                        resetGame();
+                        gameLevel(level);
+                        firstClick=true;
+                        ignoreOneFrameClick=true;
                     }
                 }
+                   
                 // UI エリアのクリックの処理
                 if(mousePos.y >= 0 && mousePos.y < UI_AREA_HEIGHT){
-                    if(state == GameState::GameOver || state == GameState::Win || state == GameState::Ready){
-                        if  (gameUI.isRestartButtonClicked(mousePos)){
-                            resetGame(); // ゲームをリセットして開始
+                    if(state == GameState::GameOver || state == GameState::Win){
+                        if  (gameUI.isGoTitleButtonClicked(mousePos)){
+                            state=GameState::MainMenu;
+                            window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper");//mainmenuは常に1600×870
+                            gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
+                            level=LevelState::BeforeChoosing;
                         }
                     }else if(state==GameState::Playing){
                         if(gameUI.isMenuButtonClicked(mousePos)){
@@ -77,12 +115,19 @@ void Game::Run(){
                     if(gameUI.isContinueButtonClicked(mousePos)){
                         state=GameState::Playing;
                     }else if(gameUI.isFinishButtonClicked(mousePos)){
+                        window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper");//mainmenuは常に1600×870
+                        gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
                         state=GameState::MainMenu;
+                        level=LevelState::BeforeChoosing;
                     }
-                }
-                else if(state == GameState::Playing){
+                    //プレイ中のロジック
+                }else if(state == GameState::Playing){
                     // クリック座標が有効な範囲内かチェック
-                    if (x >= 0 && x < NUMcol && y >= 0 && y < NUMrow) {
+                    if (x >= 0 && x < numRow && y >= 0 && y < numCol){
+                        if(ignoreOneFrameClick){//以下をスキップし難易度決定時のクリックをfirstClickに見なされないようにする
+                            ignoreOneFrameClick=false;
+                            continue;
+                        }
                         if(firstClick){
                             field.minePlace(y,x);
                             firstClick=false;
@@ -94,8 +139,8 @@ void Game::Run(){
                         } else if (field.Mined(y, x)) {
                             state = GameState::GameOver;
                         } else {
-                            OpenNumber += field.autoRelease(y, x); 
-                            if (OpenNumber == initialSafePlace) {
+                            openNumber += field.autoRelease(y, x); 
+                            if (openNumber == initialSafePlace) {
                                 state = GameState::Win;
                             }
                         }
@@ -105,7 +150,7 @@ void Game::Run(){
             // 右クリック
             else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
                 if (state == GameState::Playing) {
-                    if (x >= 0 && x < NUMcol && y >= 0 && y < NUMrow) {
+                    if (x >= 0 && x < numRow && y >= 0 && y < numCol) {
                         if (!field.Opened(y, x)) {
                             field.Flag(y, x); //フラグをトグル
                         }
@@ -113,11 +158,10 @@ void Game::Run(){
                 }
             }
         }
-        window.clear(sf::Color::Black);
+        window.clear(sf::Color::Black);//デフォルトの色
+        
         if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win||state==GameState::MainMenu){
-            gameRenderer.display(window, tileSize, state, font, field, field.getOpen(), field.getFlag());
-        }else if(state==GameState::PauseMenu){
-
+            gameRenderer.display(window, tileSize, state, font, field, field.getOpen(), field.getFlag(),numCol,numRow,numMine);
         }
         gameUI.Draw(window, state);
         window.display();
