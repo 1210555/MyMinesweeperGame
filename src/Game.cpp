@@ -3,12 +3,12 @@
 #include <cstdlib> 
 
 Game::Game()
-    :  UI_AREA_HEIGHT(70),//UI部分の高さ
+    :  UI_AREA_HEIGHT(140),//UI部分の高さ
        numCol(5),
        numRow(5),
        numMine(5),
        font(),             // sf::Font をデフォルト構築 (ロードは後で行う)
-       window(sf::VideoMode(1600+UI_AREA_HEIGHT, 800), "MineSweeper"),
+       window(sf::VideoMode(1600+UI_AREA_HEIGHT, 800), "MineSweeper",sf::Style::Titlebar | sf::Style::Close),
        state(GameState::MainMenu), //ゲーム初期設定
        level(LevelState::BeforeChoosing),//難易度初期設定
        openNumber(0),
@@ -36,6 +36,7 @@ void Game::resetGame(){
     openNumber = 0; //OpenNumberリセット
     state = GameState::Playing; //状態をPlayingに戻す
     firstClick=true;
+    gameUI.startGameTimer();//時間をupdateLayout関数内で初期化し、0に
 }
 void Game::gameLevel(LevelState choosenLevel){
     if(choosenLevel==LevelState::Easy){
@@ -53,7 +54,7 @@ void Game::gameLevel(LevelState choosenLevel){
     }
     initialTotalPlace=numCol*numRow;
     initialSafePlace=initialTotalPlace - numMine;
-    window.create(sf::VideoMode(numRow*50,numCol*50+UI_AREA_HEIGHT),"MineSweeper");
+    window.create(sf::VideoMode(numRow*50,numCol*50+UI_AREA_HEIGHT),"MineSweeper",sf::Style::Titlebar | sf::Style::Close);
     field=Field(numCol,numRow,numMine);
     gameUI.updateLayout(window.getSize().x,window.getSize().y);
 }
@@ -61,7 +62,6 @@ void Game::gameLevel(LevelState choosenLevel){
 void Game::Run(){
     int tileSize = 50; //タイルサイズ(ゲーム全体で共通の定数)
     sf::Event event;
-
     while(window.isOpen()){
         while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed){
@@ -102,20 +102,22 @@ void Game::Run(){
                     if(state == GameState::GameOver || state == GameState::Win){
                         if  (gameUI.isGoTitleButtonClicked(mousePos)){
                             state=GameState::MainMenu;
-                            window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper");//mainmenuは常に1600×870
+                            window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
                             gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
                             level=LevelState::BeforeChoosing;
                         }
                     }else if(state==GameState::Playing){
                         if(gameUI.isMenuButtonClicked(mousePos)){
                             state=GameState::PauseMenu;
+                            gameUI.pauseTimer();
                         }
                     }
                 }else if(state==GameState::PauseMenu){
                     if(gameUI.isContinueButtonClicked(mousePos)){
+                        gameUI.startGameTimer();
                         state=GameState::Playing;
                     }else if(gameUI.isFinishButtonClicked(mousePos)){
-                        window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper");//mainmenuは常に1600×870
+                        window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
                         gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
                         state=GameState::MainMenu;
                         level=LevelState::BeforeChoosing;
@@ -124,7 +126,9 @@ void Game::Run(){
                 }else if(state == GameState::Playing){
                     // クリック座標が有効な範囲内かチェック
                     if (x >= 0 && x < numRow && y >= 0 && y < numCol){
-                        if(ignoreOneFrameClick){//以下をスキップし難易度決定時のクリックをfirstClickに見なされないようにする
+                        //ignoreOneFrameClickのif以下をスキップし難易度決定時のクリックをfirstClickに見なされないようにする
+                        //これないと難易度選択のクリックがマスの開放に見なされてしまう
+                        if(ignoreOneFrameClick){
                             ignoreOneFrameClick=false;
                             continue;
                         }
@@ -163,6 +167,7 @@ void Game::Run(){
         if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win||state==GameState::MainMenu){
             gameRenderer.display(window, tileSize, state, font, field, field.getOpen(), field.getFlag(),numCol,numRow,numMine);
         }
+        gameUI.updateTimer(state);
         gameUI.Draw(window, state);
         window.display();
     }

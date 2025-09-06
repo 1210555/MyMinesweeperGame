@@ -11,10 +11,11 @@ GameUI::GameUI(int windowWidth, int windowHeight, int offset)
     
 }
 void GameUI::updateLayout(int newWidth,int newHeight){
-    centerX=newWidth/2.0f;
-    centerY=newHeight/2.0f;
+    centerX=newWidth/2.0f;//難易度に応じて変更した横幅の中間
+    centerY=newHeight/2.0f;//難易度に応じて変更した縦の長さの中間
 
-    leftInstructionText.setString("Left Click: Open Tile");
+//この部分はMainTitle時に移すようにしておく。(Playing時にずっと出さなくてもいい気がする)    
+    /*leftInstructionText.setString("Left Click: Open Tile");
     leftInstructionText.setCharacterSize(20);
     leftInstructionText.setFillColor(sf::Color::White);
     leftInstructionText.setPosition(10.0f, 10.0f);
@@ -22,7 +23,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     rightInstructionText.setString("Right Click: Flag Tile");
     rightInstructionText.setCharacterSize(20);
     rightInstructionText.setFillColor(sf::Color::White);
-    rightInstructionText.setPosition(10.0f, 40.0f);
+    rightInstructionText.setPosition(10.0f, 40.0f);*/
 
     goTitleButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
     goTitleButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
@@ -102,7 +103,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
     easyButtonText.setString("Easy");
     easyButtonText.setCharacterSize(48);
-    easyButtonText.setFillColor(sf::Color::White);
+    easyButtonText.setFillColor(sf::Color::Green);
     sf::FloatRect easyRect = easyButtonText.getLocalBounds();
     easyButtonText.setOrigin(easyRect.width / 2.0f, easyRect.top + easyRect.height / 2.0f);
     easyButtonText.setPosition(centerX,centerY-110.0f);
@@ -116,7 +117,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
     normalButtonText.setString("Normal");
     normalButtonText.setCharacterSize(48);
-    normalButtonText.setFillColor(sf::Color::White);
+    normalButtonText.setFillColor(sf::Color::Blue);
     sf::FloatRect normalRect = normalButtonText.getLocalBounds();
     normalButtonText.setOrigin(normalRect.left + normalRect.width / 2.0f, normalRect.top + normalRect.height / 2.0f);
     normalButtonText.setPosition(centerX,centerY);
@@ -130,7 +131,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
     hardButtonText.setString("Difficult");
     hardButtonText.setCharacterSize(48);
-    hardButtonText.setFillColor(sf::Color::White);
+    hardButtonText.setFillColor(sf::Color::Red);
     sf::FloatRect hardRect = hardButtonText.getLocalBounds();
     hardButtonText.setOrigin(hardRect.left + hardRect.width / 2.0f, hardRect.top + hardRect.height / 2.0f);
     hardButtonText.setPosition(centerX,centerY+110.0f);
@@ -143,11 +144,49 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     winText.setPosition(centerX,uiOffset/2);//UI部分中央に表示
 
     gameOverText.setString("Game Over!");
-    gameOverText.setCharacterSize(30); // サイズ
+    gameOverText.setCharacterSize(30); //サイズ
     gameOverText.setFillColor(sf::Color::Red);
     sf::FloatRect goRect = gameOverText.getLocalBounds();
     gameOverText.setOrigin(goRect.width / 2.0f, goRect.top + goRect.height / 2.0f);
     gameOverText.setPosition(centerX, uiOffset / 2);//UI部分中央に表示
+//時間表示ボックス
+    timeDisplayShape.setSize(sf::Vector2f(200.0f, 100.0f));//横200、縦100
+    timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒            timeDisplayShape.setOrigin(timeDisplayShape.getSize().x / 2.0f,timeDisplayShape.getSize().y / 2.0f);
+    timeDisplayShape.setOutlineThickness(2);
+    timeDisplayShape.setOrigin(timeDisplayShape.getSize() / 2.0f);
+    timeDisplayShape.setOutlineColor(sf::Color::White);//ボックスの枠線の色
+    timeDisplayShape.setPosition(centerX,uiOffset/2.0f);
+
+    //Timeってテキスト
+    timeBoxText.setCharacterSize(30);
+    timeBoxText.setFillColor(sf::Color::White);
+    timeBoxText.setString("Time");
+    sf::FloatRect timeBoxRect = timeBoxText.getLocalBounds();
+    timeBoxText.setOrigin(timeBoxRect.width / 2.0f, timeBoxRect.top + timeBoxRect.height / 2.0f);
+    timeBoxText.setPosition(centerX,uiOffset/3.0f);
+
+    timeDisplayText.setCharacterSize(30);
+    timeDisplayText.setFillColor(sf::Color::White);
+    timeDisplayText.setString("0");//いったん適当なものをいれて以下で原点を合わせられるように
+    sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
+    timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
+    timeDisplayText.setPosition(centerX,uiOffset/1.5f);
+}
+//タイマー表示
+void GameUI::updateTimer(GameState currentState){
+    if(currentState==GameState::Playing){
+        sf::Time totalElapsedTime=elapsedTimeWhenPaused + gameClock.getElapsedTime();
+        int nowSeconds=totalElapsedTime.asSeconds();
+        timeDisplayText.setString(std::to_string(nowSeconds));
+    }
+}
+
+void GameUI::pauseTimer(){
+    elapsedTimeWhenPaused+=gameClock.getElapsedTime();
+}
+
+void GameUI::startGameTimer(){
+    gameClock.restart();//sf::Clock gameClock
 }
 
 void GameUI::setFont(const sf::Font& loadedFont){
@@ -175,15 +214,21 @@ void GameUI::setFont(const sf::Font& loadedFont){
     easyButtonText.setFont(loadedFont);
     normalButtonText.setFont(loadedFont);
     hardButtonText.setFont(loadedFont);
+    //Timeをテキスト表示
+    timeBoxText.setFont(loadedFont);
+    //時間の表示
+    timeDisplayText.setFont(loadedFont);
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
-    // Playingのみ操作説明テキストを描画
     if (currentState == GameState::Playing){
-        window.draw(leftInstructionText);
-        window.draw(rightInstructionText);
+        /*window.draw(leftInstructionText);
+        window.draw(rightInstructionText);*/
         window.draw(menuButtonShape);
+        window.draw(timeDisplayShape);
         window.draw(menuButtonText);
+        window.draw(timeBoxText);
+        window.draw(timeDisplayText);
     }else if(currentState==GameState::MainMenu){
         window.draw(titleText);
         window.draw(easyButtonShape);
@@ -198,44 +243,43 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         window.draw(continueButtonText);
         window.draw(finishButtonShape);
         window.draw(finishButtonText);
-    }
-    if (currentState == GameState::GameOver || currentState == GameState::Win) {
+    }else{//GameOverかWin時のテキストやボックス
         window.draw(goTitleButtonShape); 
         window.draw(goTitleButtonText);
 
         if (currentState == GameState::GameOver){
             window.draw(gameOverText);
-        }else if (currentState == GameState::Win){
+        }else{
             window.draw(winText);
         }
     }
 }
 
+// マウス位置がボタンの描画領域内にあるかを判定
 bool GameUI::isGoTitleButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return goTitleButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
 bool GameUI::isMenuButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return menuButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
 bool GameUI::isContinueButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return continueButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
 bool GameUI::isFinishButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return finishButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
 bool GameUI::isEasyButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return easyButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
 bool GameUI::isNormalButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return normalButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
 bool GameUI::isHardButtonClicked(const sf::Vector2i& mousePos) const {
-    // マウス位置がボタンの描画領域内にあるかを判定
     return hardButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
