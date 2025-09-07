@@ -25,18 +25,27 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     rightInstructionText.setFillColor(sf::Color::White);
     rightInstructionText.setPosition(10.0f, 40.0f);*/
 
+
+    endGamePanelShape.setSize(sf::Vector2f(400.0f, 200.0f));
+    endGamePanelShape.setFillColor(sf::Color(0, 0, 0,100)); //グレー
+    endGamePanelShape.setOrigin(endGamePanelShape.getSize()/ 2.0f);
+    endGamePanelShape.setOutlineThickness(5);
+    endGamePanelShape.setOutlineColor(sf::Color::White);
+    endGamePanelShape.setPosition(centerX,centerY+uiOffset/2.0f);
+
     goTitleButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
     goTitleButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    goTitleButtonShape.setOrigin(goTitleButtonShape.getSize() / 2.0f);
     goTitleButtonShape.setOutlineThickness(2);
     goTitleButtonShape.setOutlineColor(sf::Color::White);
-    goTitleButtonShape.setPosition(static_cast<float>(newWidth - 10 - goTitleButtonShape.getSize().x),static_cast<float>(uiOffset / 2.0f - goTitleButtonShape.getSize().y / 2.0f));
+    goTitleButtonShape.setPosition(centerX,centerY+50.0f);
 
     goTitleButtonText.setString("GoTitle");
     goTitleButtonText.setCharacterSize(18);
     goTitleButtonText.setFillColor(sf::Color::White);
     sf::FloatRect goTitletextBounds = goTitleButtonText.getLocalBounds();
     goTitleButtonText.setOrigin(goTitletextBounds.left + goTitletextBounds.width / 2.0f, goTitletextBounds.top + goTitletextBounds.height / 2.0f);
-    goTitleButtonText.setPosition(static_cast<float>(goTitleButtonShape.getPosition().x + goTitleButtonShape.getSize().x / 2.0f),static_cast<float>(goTitleButtonShape.getPosition().y + goTitleButtonShape.getSize().y / 2.0f));
+    goTitleButtonText.setPosition(centerX,centerY+50.0f);
 //ポーズメニューテキスト
     pauseMenuText.setString("Puase");
     pauseMenuText.setCharacterSize(50);
@@ -141,14 +150,14 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     winText.setFillColor(sf::Color::Green);
     sf::FloatRect winRect = winText.getLocalBounds();
     winText.setOrigin(winRect.width/2.0f,winRect.top + winRect.height / 2.0f);
-    winText.setPosition(centerX,uiOffset/2);//UI部分中央に表示
+    winText.setPosition(centerX,centerY);//
 
     gameOverText.setString("Game Over!");
     gameOverText.setCharacterSize(30); //サイズ
     gameOverText.setFillColor(sf::Color::Red);
     sf::FloatRect goRect = gameOverText.getLocalBounds();
     gameOverText.setOrigin(goRect.width / 2.0f, goRect.top + goRect.height / 2.0f);
-    gameOverText.setPosition(centerX, uiOffset / 2);//UI部分中央に表示
+    gameOverText.setPosition(centerX, centerY);//UI部分中央に表示
 //時間表示ボックス
     timeDisplayShape.setSize(sf::Vector2f(200.0f, 100.0f));//横200、縦100
     timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒            timeDisplayShape.setOrigin(timeDisplayShape.getSize().x / 2.0f,timeDisplayShape.getSize().y / 2.0f);
@@ -175,12 +184,15 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 //タイマー表示
 void GameUI::updateTimer(GameState currentState){
     if(currentState==GameState::Playing){
+        //ポーズ時の時間と再開してからカウントした時間を合計、それを表示。
         sf::Time totalElapsedTime=elapsedTimeWhenPaused + gameClock.getElapsedTime();
         int nowSeconds=totalElapsedTime.asSeconds();
         timeDisplayText.setString(std::to_string(nowSeconds));
+        sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
+        timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
     }
 }
-
+//ポーズしたときの時間を保持
 void GameUI::pauseTimer(){
     elapsedTimeWhenPaused+=gameClock.getElapsedTime();
 }
@@ -225,8 +237,8 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         /*window.draw(leftInstructionText);
         window.draw(rightInstructionText);*/
         window.draw(menuButtonShape);
-        window.draw(timeDisplayShape);
         window.draw(menuButtonText);
+        window.draw(timeDisplayShape);
         window.draw(timeBoxText);
         window.draw(timeDisplayText);
     }else if(currentState==GameState::MainMenu){
@@ -244,9 +256,13 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         window.draw(finishButtonShape);
         window.draw(finishButtonText);
     }else{//GameOverかWin時のテキストやボックス
+        
+        window.draw(timeDisplayShape);
+        window.draw(timeBoxText);
+        window.draw(timeDisplayText);
+        window.draw(endGamePanelShape);
         window.draw(goTitleButtonShape); 
         window.draw(goTitleButtonText);
-
         if (currentState == GameState::GameOver){
             window.draw(gameOverText);
         }else{
@@ -257,6 +273,7 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
 
 // マウス位置がボタンの描画領域内にあるかを判定
 bool GameUI::isGoTitleButtonClicked(const sf::Vector2i& mousePos) const {
+    std::cout<<"gotitle"<<std::endl;
     return goTitleButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 

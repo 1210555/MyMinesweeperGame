@@ -9,6 +9,7 @@ class GameUI{
         sf::Text leftInstructionText;//操作方法左クリックでマス開放
         sf::Text rightInstructionText;//操作方法右クリックでフラッグ設置
         sf::Text gameOverText;//ゲームオーバーテキストの表示
+        sf::RectangleShape endGamePanelShape;//winテキストをいれるボックス
         sf::Text winText;//勝利時のテキスト
         sf::Text titleText;//タイトルのテキスト
         sf::Text pauseMenuText;//ポーズメニューのテキスト

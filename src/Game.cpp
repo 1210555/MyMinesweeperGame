@@ -37,26 +37,31 @@ void Game::resetGame(){
     state = GameState::Playing; //状態をPlayingに戻す
     firstClick=true;
     gameUI.startGameTimer();//時間をupdateLayout関数内で初期化し、0に
+    std::cout<<"resetGame"<<std::endl;
 }
 void Game::gameLevel(LevelState choosenLevel){
     if(choosenLevel==LevelState::Easy){
         numCol=5;
         numRow=10;
         numMine=5;
+        std::cout<<"choosed easy"<<std::endl;
     }else if(choosenLevel==LevelState::Normal){
         numCol=10;
         numRow=20;
         numMine=30;
+        std::cout<<"choosed normal"<<std::endl;
     }else if(choosenLevel==LevelState::Hard){
         numCol=16;
         numRow=32;
         numMine=60;
+        std::cout<<"choosed difficult"<<std::endl;
     }
     initialTotalPlace=numCol*numRow;
     initialSafePlace=initialTotalPlace - numMine;
     window.create(sf::VideoMode(numRow*50,numCol*50+UI_AREA_HEIGHT),"MineSweeper",sf::Style::Titlebar | sf::Style::Close);
     field=Field(numCol,numRow,numMine);
     gameUI.updateLayout(window.getSize().x,window.getSize().y);
+    //std::cout<<"gameLevel set"<<std::endl;
 }
 
 void Game::Run(){
@@ -72,46 +77,71 @@ void Game::Run(){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             int x = mousePos.x / tileSize;
             int y = (mousePos.y - UI_AREA_HEIGHT) / tileSize;
-            
 
            // 左クリックの処理
             if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left){
                 if(state==GameState::MainMenu){
                     if(gameUI.isEasyButtonClicked(mousePos)){
                         level=LevelState::Easy;
-                        resetGame();
+                        //resetGame();
                         gameLevel(level);
-                        firstClick=true;;
+                        resetGame();
+                        firstClick=true;
+                        ignoreOneFrameClick=true;
                     }else if(gameUI.isNormalButtonClicked(mousePos)){
                         level=LevelState::Normal;
-                        resetGame();
+                        //resetGame();
                         gameLevel(level);
+                        resetGame();
                         firstClick=true;
                         ignoreOneFrameClick=true;
                     }else if(gameUI.isHardButtonClicked(mousePos)){
                         level=LevelState::Hard;
-                        resetGame();
+                        //resetGame();
                         gameLevel(level);
+                        resetGame();
                         firstClick=true;
                         ignoreOneFrameClick=true;
                     }
                 }
-                   
-                // UI エリアのクリックの処理
-                if(mousePos.y >= 0 && mousePos.y < UI_AREA_HEIGHT){
-                    if(state == GameState::GameOver || state == GameState::Win){
-                        if  (gameUI.isGoTitleButtonClicked(mousePos)){
-                            state=GameState::MainMenu;
-                            window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
-                            gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
-                            level=LevelState::BeforeChoosing;
-                        }
-                    }else if(state==GameState::Playing){
+
+                else if(state == GameState::GameOver || state == GameState::Win){
+                    if  (gameUI.isGoTitleButtonClicked(mousePos)){
+                        std::cout<<"Go title ninaruhazu"<<std::endl;
+                        state=GameState::MainMenu;
+                        window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
+                        gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
+                        level=LevelState::BeforeChoosing;
+                    }
+                }
+                else if(state==GameState::Playing){
+                    //Playing時のみUIエリアかどうかのチェック
+                    if(mousePos.y >= 0 && mousePos.y < UI_AREA_HEIGHT){
                         if(gameUI.isMenuButtonClicked(mousePos)){
                             state=GameState::PauseMenu;
                             gameUI.pauseTimer();
                         }
-                    }
+                    }else{
+                        if (x >= 0 && x < numRow && y >= 0 && y < numCol){
+                            if(firstClick){
+                                field.minePlace(y,x);
+                                firstClick=false;
+                                std::cout<<"first clicked."<<std::endl;
+                            }
+                            if (field.Flagged(y, x)) {
+                                continue;
+                            } else if (field.Opened(y, x)) {
+                                continue;
+                            } else if (field.Mined(y, x)) {
+                                state = GameState::GameOver;
+                            } else {
+                                openNumber += field.autoRelease(y, x); 
+                                if (openNumber == initialSafePlace) {
+                                    state = GameState::Win;
+                                }
+                            }
+                        }
+                    } 
                 }else if(state==GameState::PauseMenu){
                     if(gameUI.isContinueButtonClicked(mousePos)){
                         gameUI.startGameTimer();
@@ -123,36 +153,10 @@ void Game::Run(){
                         level=LevelState::BeforeChoosing;
                     }
                     //プレイ中のロジック
-                }else if(state == GameState::Playing){
-                    // クリック座標が有効な範囲内かチェック
-                    if (x >= 0 && x < numRow && y >= 0 && y < numCol){
-                        //ignoreOneFrameClickのif以下をスキップし難易度決定時のクリックをfirstClickに見なされないようにする
-                        //これないと難易度選択のクリックがマスの開放に見なされてしまう
-                        if(ignoreOneFrameClick){
-                            ignoreOneFrameClick=false;
-                            continue;
-                        }
-                        if(firstClick){
-                            field.minePlace(y,x);
-                            firstClick=false;
-                        }
-                        if (field.Flagged(y, x)) {
-                            continue;
-                        } else if (field.Opened(y, x)) {
-                            continue;
-                        } else if (field.Mined(y, x)) {
-                            state = GameState::GameOver;
-                        } else {
-                            openNumber += field.autoRelease(y, x); 
-                            if (openNumber == initialSafePlace) {
-                                state = GameState::Win;
-                            }
-                        }
-                    }
                 }
             }
             // 右クリック
-            else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
                 if (state == GameState::Playing) {
                     if (x >= 0 && x < numRow && y >= 0 && y < numCol) {
                         if (!field.Opened(y, x)) {
