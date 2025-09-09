@@ -194,10 +194,12 @@ void GameUI::updateTimer(GameState currentState){
 }
 //ポーズしたときの時間を保持
 void GameUI::pauseTimer(){
+    //ポーズしたとき経過した時間
     elapsedTimeWhenPaused+=gameClock.getElapsedTime();
 }
 
 void GameUI::startGameTimer(){
+    elapsedTimeWhenPaused=sf::Time::Zero;//ポーズ画面から終了したときも時間を０に
     gameClock.restart();//sf::Clock gameClock
 }
 
@@ -255,8 +257,8 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         window.draw(continueButtonText);
         window.draw(finishButtonShape);
         window.draw(finishButtonText);
-    }else{//GameOverかWin時のテキストやボックス
-        
+    }else{
+        //GameOverかWin時のテキストやボックス
         window.draw(timeDisplayShape);
         window.draw(timeBoxText);
         window.draw(timeDisplayText);
