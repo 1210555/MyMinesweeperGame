@@ -21,6 +21,7 @@ class GameUI{
         sf::Text continueButtonText;//
         sf::RectangleShape finishButtonShape;//
         sf::Text finishButtonText;//
+        //sf::ConvexShape easyButtonShape;
         sf::RectangleShape easyButtonShape;//
         sf::Text easyButtonText;//
         sf::RectangleShape normalButtonShape;//
@@ -49,6 +50,7 @@ class GameUI{
     void pauseTimer();//ポーズ再開後の時間を保持（停止）するための関数
     void updateTimer(GameState currentState);//時間表示の関数
     void setFont(const sf::Font& loadedFont);//フォントを読み込み
+    void initializeStyles();
     void Draw(sf::RenderWindow& window,GameState currentState) const;
     bool isGoTitleButtonClicked(const sf::Vector2i& mousePos) const;
     bool isMenuButtonClicked(const sf::Vector2i& mousePos) const;

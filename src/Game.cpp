@@ -8,6 +8,7 @@ Game::Game()
        numRow(5),
        numMine(5),
        font(),// sf::Font をデフォルト構築 (ロードは後で行う)
+       myFont(),
        window(sf::VideoMode(1600+UI_AREA_HEIGHT, 800), "MineSweeper",sf::Style::Titlebar | sf::Style::Close),
        state(GameState::MainMenu), //ゲーム初期設定
        level(LevelState::BeforeChoosing),//難易度初期設定
@@ -19,7 +20,7 @@ Game::Game()
        gameRenderer(UI_AREA_HEIGHT),
        gameUI(1600+UI_AREA_HEIGHT,800, UI_AREA_HEIGHT)
 {
-    if(!font.loadFromFile("assets/Fonts/arial.ttf")){
+    if(!font.loadFromFile("assets/Fonts/ArchivoBlack-Regular.ttf")){
         std::cerr << "Error loading font: resources/arial.ttf" << std::endl;
         window.close();
         exit(EXIT_FAILURE); // フォントロード失敗時は終了
@@ -46,7 +47,9 @@ Game::Game()
 
     // ロードしたフォントを GameUI に設定
     gameUI.setFont(font);
+    gameUI.initializeStyles();
     gameUI.updateLayout(1600+UI_AREA_HEIGHT,800);
+    
 }
 
 // ゲームの状態をリセットする関数
@@ -144,7 +147,6 @@ void Game::Run(){
                             }else{
                                 int releaseCount=field.autoRelease(y,x);
                                 openNumber+=releaseCount;
-                                std::cout<<"released grid is : "<<releaseCount<<std::endl;
                                 if(releaseCount==1){
                                     m_soundManager.playSound("click1");//1マス開放時のサウンド
                                 }else{

@@ -27,7 +27,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
 
     endGamePanelShape.setSize(sf::Vector2f(400.0f, 200.0f));
-    endGamePanelShape.setFillColor(sf::Color(0, 0, 0,100)); //グレー
+    endGamePanelShape.setFillColor(sf::Color(0, 0, 0,100)); //グレー,背景透過
     endGamePanelShape.setOrigin(endGamePanelShape.getSize()/ 2.0f);
     endGamePanelShape.setOutlineThickness(5);
     endGamePanelShape.setOutlineColor(sf::Color::White);
@@ -96,65 +96,65 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     menuButtonText.setPosition(static_cast<float>(menuButtonShape.getPosition().x + menuButtonShape.getSize().x / 2.0f),static_cast<float>(menuButtonShape.getPosition().y + menuButtonShape.getSize().y / 2.0f));
 
     //難易度選択は常に同じウィンドウサイズだからウィンドウの中心の数値(250,535)をいれてる
-    titleText.setString("MyMineSweeper");
+    /*titleText.setString("MyMineSweeper");
     titleText.setCharacterSize(60);
-    titleText.setFillColor(sf::Color::Black);
+    titleText.setFillColor(sf::Color::Black);*/
     sf::FloatRect titleRect = titleText.getLocalBounds();
     titleText.setOrigin(titleRect.width/2.0f,titleRect.top + titleRect.height / 2.0f);
-    titleText.setPosition(centerX,uiOffset/2.0f);//UI部分中央に表示
+    titleText.setPosition(centerX,uiOffset);//UI部分中央に表示
 
     easyButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
     easyButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー（数字が大きいほど白） 
     easyButtonShape.setOrigin(easyButtonShape.getSize().x / 2.0f,easyButtonShape.getSize().y / 2.0f-60.0f);
-    easyButtonShape.setOutlineThickness(2);
+    easyButtonShape.setOutlineThickness(10);
     easyButtonShape.setOutlineColor(sf::Color::White);
-    easyButtonShape.setPosition(centerX,centerY-170.0f);
+    easyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);
 
-    easyButtonText.setString("Easy");
+    /*easyButtonText.setString("Easy");
     easyButtonText.setCharacterSize(48);
-    easyButtonText.setFillColor(sf::Color::Green);
+    easyButtonText.setFillColor(sf::Color::Green);*/
     sf::FloatRect easyRect = easyButtonText.getLocalBounds();
     easyButtonText.setOrigin(easyRect.width / 2.0f, easyRect.top + easyRect.height / 2.0f);
-    easyButtonText.setPosition(centerX,centerY-110.0f);
+    easyButtonText.setPosition(centerX,centerY-45.0f);
 
     normalButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
     normalButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
     normalButtonShape.setOrigin(normalButtonShape.getSize() / 2.0f);
-    normalButtonShape.setOutlineThickness(2);
+    normalButtonShape.setOutlineThickness(10);
     normalButtonShape.setOutlineColor(sf::Color::White);
-    normalButtonShape.setPosition(centerX,centerY);
+    normalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
 
-    normalButtonText.setString("Normal");
+    /*normalButtonText.setString("Normal");
     normalButtonText.setCharacterSize(48);
-    normalButtonText.setFillColor(sf::Color::Blue);
+    normalButtonText.setFillColor(sf::Color::Blue);*/
     sf::FloatRect normalRect = normalButtonText.getLocalBounds();
     normalButtonText.setOrigin(normalRect.left + normalRect.width / 2.0f, normalRect.top + normalRect.height / 2.0f);
-    normalButtonText.setPosition(centerX,centerY);
+    normalButtonText.setPosition(centerX,centerY+centerY/3-55.0f);
 
     hardButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
     hardButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
     hardButtonShape.setOrigin(hardButtonShape.getSize().x / 2.0f,hardButtonShape.getSize().y / 2.0f+60.0f);
-    hardButtonShape.setOutlineThickness(2);
+    hardButtonShape.setOutlineThickness(10);
     hardButtonShape.setOutlineColor(sf::Color::White);
-    hardButtonShape.setPosition(centerX,centerY+170.0f);
+    hardButtonShape.setPosition(centerX,centerY+centerY*2/3);
 
-    hardButtonText.setString("Difficult");
+    /*hardButtonText.setString("Difficult");
     hardButtonText.setCharacterSize(48);
-    hardButtonText.setFillColor(sf::Color::Red);
+    hardButtonText.setFillColor(sf::Color::Red);*/
     sf::FloatRect hardRect = hardButtonText.getLocalBounds();
-    hardButtonText.setOrigin(hardRect.left + hardRect.width / 2.0f, hardRect.top + hardRect.height / 2.0f);
-    hardButtonText.setPosition(centerX,centerY+110.0f);
+    hardButtonText.setOrigin(hardRect.left+hardRect.width/2.0f,hardRect.top+hardRect.height/2.0f);
+    hardButtonText.setPosition(centerX,centerY+centerY*2/3-60.0f);
 
-    winText.setString("You Win!");
+    /*winText.setString("You Win!");
     winText.setCharacterSize(48);
-    winText.setFillColor(sf::Color::Green);
+    winText.setFillColor(sf::Color::Green);*/
     sf::FloatRect winRect = winText.getLocalBounds();
     winText.setOrigin(winRect.width/2.0f,winRect.top + winRect.height / 2.0f);
     winText.setPosition(centerX,centerY);//
 
-    gameOverText.setString("Game Over!");
+    /*gameOverText.setString("Game Over!");
     gameOverText.setCharacterSize(30); //サイズ
-    gameOverText.setFillColor(sf::Color::Red);
+    gameOverText.setFillColor(sf::Color::Red);*/
     sf::FloatRect goRect = gameOverText.getLocalBounds();
     gameOverText.setOrigin(goRect.width / 2.0f, goRect.top + goRect.height / 2.0f);
     gameOverText.setPosition(centerX, centerY);//UI部分中央に表示
@@ -167,16 +167,17 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     timeDisplayShape.setPosition(centerX,uiOffset/2.0f);
 
     //Timeってテキスト
-    timeBoxText.setCharacterSize(30);
+    /*timeBoxText.setCharacterSize(30);
     timeBoxText.setFillColor(sf::Color::White);
-    timeBoxText.setString("Time");
+    timeBoxText.setString("Time");*/
     sf::FloatRect timeBoxRect = timeBoxText.getLocalBounds();
     timeBoxText.setOrigin(timeBoxRect.width / 2.0f, timeBoxRect.top + timeBoxRect.height / 2.0f);
     timeBoxText.setPosition(centerX,uiOffset/3.0f);
 
-    timeDisplayText.setCharacterSize(30);
+    /*timeDisplayText.setCharacterSize(30);
     timeDisplayText.setFillColor(sf::Color::White);
     timeDisplayText.setString("0");//いったん適当なものをいれて以下で原点を合わせられるように
+    */
     sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
     timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
     timeDisplayText.setPosition(centerX,uiOffset/1.5f);
@@ -232,6 +233,32 @@ void GameUI::setFont(const sf::Font& loadedFont){
     timeBoxText.setFont(loadedFont);
     //時間の表示
     timeDisplayText.setFont(loadedFont);
+}
+
+void GameUI::initializeStyles(){
+    easyButtonText.setFillColor(sf::Color::Black);
+    easyButtonText.setOutlineColor(sf::Color::Green);
+    easyButtonText.setOutlineThickness(8.0f);
+    easyButtonText.setCharacterSize(48);
+    easyButtonText.setString("Easy"); // 静的なテキストもここで設定
+
+    normalButtonText.setFillColor(sf::Color::Black);
+    normalButtonText.setOutlineColor(sf::Color::Blue);
+    normalButtonText.setOutlineThickness(8.0f);
+    normalButtonText.setCharacterSize(48);
+    normalButtonText.setString("Normal");
+
+    hardButtonText.setFillColor(sf::Color::Black);
+    hardButtonText.setOutlineColor(sf::Color::Red);
+    hardButtonText.setOutlineThickness(8.0f);
+    hardButtonText.setCharacterSize(48);
+    hardButtonText.setString("Difficult");
+
+    titleText.setFillColor(sf::Color::Black);
+    titleText.setOutlineColor(sf::Color::White);
+    titleText.setOutlineThickness(20.0f);
+    titleText.setCharacterSize(120);
+    titleText.setString("MyMineSweeper");
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
