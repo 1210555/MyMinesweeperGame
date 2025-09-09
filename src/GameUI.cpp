@@ -24,162 +24,48 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     rightInstructionText.setCharacterSize(20);
     rightInstructionText.setFillColor(sf::Color::White);
     rightInstructionText.setPosition(10.0f, 40.0f);*/
-
-
-    endGamePanelShape.setSize(sf::Vector2f(400.0f, 200.0f));
-    endGamePanelShape.setFillColor(sf::Color(0, 0, 0,100)); //グレー,背景透過
-    endGamePanelShape.setOrigin(endGamePanelShape.getSize()/ 2.0f);
-    endGamePanelShape.setOutlineThickness(5);
-    endGamePanelShape.setOutlineColor(sf::Color::White);
     endGamePanelShape.setPosition(centerX,centerY+uiOffset/2.0f);
 
-    goTitleButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
-    goTitleButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
-    goTitleButtonShape.setOrigin(goTitleButtonShape.getSize() / 2.0f);
-    goTitleButtonShape.setOutlineThickness(2);
-    goTitleButtonShape.setOutlineColor(sf::Color::White);
     goTitleButtonShape.setPosition(centerX,centerY+50.0f);
 
-    goTitleButtonText.setString("GoTitle");
-    goTitleButtonText.setCharacterSize(18);
-    goTitleButtonText.setFillColor(sf::Color::White);
-    sf::FloatRect goTitletextBounds = goTitleButtonText.getLocalBounds();
-    goTitleButtonText.setOrigin(goTitletextBounds.left + goTitletextBounds.width / 2.0f, goTitletextBounds.top + goTitletextBounds.height / 2.0f);
     goTitleButtonText.setPosition(centerX,centerY+50.0f);
 //ポーズメニューテキスト
-    pauseMenuText.setString("Puase");
-    pauseMenuText.setCharacterSize(50);
-    pauseMenuText.setFillColor(sf::Color::White);
-    sf::FloatRect pauseRect = pauseMenuText.getLocalBounds();
-    pauseMenuText.setOrigin(pauseRect.width / 2.0f, pauseRect.top + pauseRect.height / 2.0f);
     pauseMenuText.setPosition(centerX,uiOffset/2.0f);
 
-    continueButtonShape.setSize(sf::Vector2f(300.0f, 60.0f));
-    continueButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
-    continueButtonShape.setOrigin(continueButtonShape.getSize() / 2.0f);
-    continueButtonShape.setOutlineThickness(2);
-    continueButtonShape.setOutlineColor(sf::Color::White);
     continueButtonShape.setPosition(centerX,centerY-50.0f);
 
-    continueButtonText.setString("CONTINUE");
-    continueButtonText.setCharacterSize(30);
-    continueButtonText.setFillColor(sf::Color::White);
-    sf::FloatRect continueRect = continueButtonText.getLocalBounds();
-    continueButtonText.setOrigin(continueRect.left + continueRect.width / 2.0f, continueRect.top + continueRect.height / 2.0f);
     continueButtonText.setPosition(centerX,centerY-50.0f);
-
-    finishButtonShape.setSize(sf::Vector2f(300.0f, 60.0f));
-    finishButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
-    finishButtonShape.setOrigin(finishButtonShape.getSize().x / 2.0f,finishButtonShape.getSize().y / 2.0f);
-    finishButtonShape.setOutlineThickness(2);
-    finishButtonShape.setOutlineColor(sf::Color::White);
+    
     finishButtonShape.setPosition(centerX,centerY+50.0f);
 
-    finishButtonText.setString("FINISH");
-    finishButtonText.setCharacterSize(30);
-    finishButtonText.setFillColor(sf::Color::White);
-    sf::FloatRect finishRect = finishButtonText.getLocalBounds();
-    finishButtonText.setOrigin(finishRect.left + finishRect.width / 2.0f, finishRect.top + finishRect.height / 2.0f);
     finishButtonText.setPosition(centerX,centerY+50.0f);
 
-    menuButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
-    menuButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
-    menuButtonShape.setOutlineThickness(2);
-    menuButtonShape.setOutlineColor(sf::Color::White);
     menuButtonShape.setPosition(static_cast<float>(newWidth - 10 - menuButtonShape.getSize().x),static_cast<float>(uiOffset / 2.0f - menuButtonShape.getSize().y / 2.0f));
 
-    menuButtonText.setString("Menu");
-    menuButtonText.setCharacterSize(18);
-    menuButtonText.setFillColor(sf::Color::White);
-    sf::FloatRect menuRect = menuButtonText.getLocalBounds();
-    menuButtonText.setOrigin(menuRect.left + menuRect.width / 2.0f, menuRect.top + menuRect.height / 2.0f);
     menuButtonText.setPosition(static_cast<float>(menuButtonShape.getPosition().x + menuButtonShape.getSize().x / 2.0f),static_cast<float>(menuButtonShape.getPosition().y + menuButtonShape.getSize().y / 2.0f));
 
-    //難易度選択は常に同じウィンドウサイズだからウィンドウの中心の数値(250,535)をいれてる
-    /*titleText.setString("MyMineSweeper");
-    titleText.setCharacterSize(60);
-    titleText.setFillColor(sf::Color::Black);*/
-    sf::FloatRect titleRect = titleText.getLocalBounds();
-    titleText.setOrigin(titleRect.width/2.0f,titleRect.top + titleRect.height / 2.0f);
     titleText.setPosition(centerX,uiOffset);//UI部分中央に表示
 
-    easyButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
-    easyButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー（数字が大きいほど白） 
-    easyButtonShape.setOrigin(easyButtonShape.getSize().x / 2.0f,easyButtonShape.getSize().y / 2.0f-60.0f);
-    easyButtonShape.setOutlineThickness(10);
-    easyButtonShape.setOutlineColor(sf::Color::White);
     easyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);
 
-    /*easyButtonText.setString("Easy");
-    easyButtonText.setCharacterSize(48);
-    easyButtonText.setFillColor(sf::Color::Green);*/
-    sf::FloatRect easyRect = easyButtonText.getLocalBounds();
-    easyButtonText.setOrigin(easyRect.width / 2.0f, easyRect.top + easyRect.height / 2.0f);
     easyButtonText.setPosition(centerX,centerY-45.0f);
 
-    normalButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
-    normalButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
-    normalButtonShape.setOrigin(normalButtonShape.getSize() / 2.0f);
-    normalButtonShape.setOutlineThickness(10);
-    normalButtonShape.setOutlineColor(sf::Color::White);
     normalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
 
-    /*normalButtonText.setString("Normal");
-    normalButtonText.setCharacterSize(48);
-    normalButtonText.setFillColor(sf::Color::Blue);*/
-    sf::FloatRect normalRect = normalButtonText.getLocalBounds();
-    normalButtonText.setOrigin(normalRect.left + normalRect.width / 2.0f, normalRect.top + normalRect.height / 2.0f);
     normalButtonText.setPosition(centerX,centerY+centerY/3-55.0f);
 
-    hardButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
-    hardButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
-    hardButtonShape.setOrigin(hardButtonShape.getSize().x / 2.0f,hardButtonShape.getSize().y / 2.0f+60.0f);
-    hardButtonShape.setOutlineThickness(10);
-    hardButtonShape.setOutlineColor(sf::Color::White);
     hardButtonShape.setPosition(centerX,centerY+centerY*2/3);
 
-    /*hardButtonText.setString("Difficult");
-    hardButtonText.setCharacterSize(48);
-    hardButtonText.setFillColor(sf::Color::Red);*/
-    sf::FloatRect hardRect = hardButtonText.getLocalBounds();
-    hardButtonText.setOrigin(hardRect.left+hardRect.width/2.0f,hardRect.top+hardRect.height/2.0f);
     hardButtonText.setPosition(centerX,centerY+centerY*2/3-60.0f);
-
-    /*winText.setString("You Win!");
-    winText.setCharacterSize(48);
-    winText.setFillColor(sf::Color::Green);*/
-    sf::FloatRect winRect = winText.getLocalBounds();
-    winText.setOrigin(winRect.width/2.0f,winRect.top + winRect.height / 2.0f);
+    
     winText.setPosition(centerX,centerY);//
 
-    /*gameOverText.setString("Game Over!");
-    gameOverText.setCharacterSize(30); //サイズ
-    gameOverText.setFillColor(sf::Color::Red);*/
-    sf::FloatRect goRect = gameOverText.getLocalBounds();
-    gameOverText.setOrigin(goRect.width / 2.0f, goRect.top + goRect.height / 2.0f);
     gameOverText.setPosition(centerX, centerY);//UI部分中央に表示
 //時間表示ボックス
-    timeDisplayShape.setSize(sf::Vector2f(200.0f, 100.0f));//横200、縦100
-    timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒            timeDisplayShape.setOrigin(timeDisplayShape.getSize().x / 2.0f,timeDisplayShape.getSize().y / 2.0f);
-    timeDisplayShape.setOutlineThickness(2);
-    timeDisplayShape.setOrigin(timeDisplayShape.getSize() / 2.0f);
-    timeDisplayShape.setOutlineColor(sf::Color::White);//ボックスの枠線の色
     timeDisplayShape.setPosition(centerX,uiOffset/2.0f);
-
-    //Timeってテキスト
-    /*timeBoxText.setCharacterSize(30);
-    timeBoxText.setFillColor(sf::Color::White);
-    timeBoxText.setString("Time");*/
-    sf::FloatRect timeBoxRect = timeBoxText.getLocalBounds();
-    timeBoxText.setOrigin(timeBoxRect.width / 2.0f, timeBoxRect.top + timeBoxRect.height / 2.0f);
+//Timeってテキスト
     timeBoxText.setPosition(centerX,uiOffset/3.0f);
-
-    /*timeDisplayText.setCharacterSize(30);
-    timeDisplayText.setFillColor(sf::Color::White);
-    timeDisplayText.setString("0");//いったん適当なものをいれて以下で原点を合わせられるように
-    */
-    sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
-    timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
+//秒数テキスト
     timeDisplayText.setPosition(centerX,uiOffset/1.5f);
 }
 //タイマー表示
@@ -236,29 +122,144 @@ void GameUI::setFont(const sf::Font& loadedFont){
 }
 
 void GameUI::initializeStyles(){
+    endGamePanelShape.setSize(sf::Vector2f(400.0f, 200.0f));
+    endGamePanelShape.setFillColor(sf::Color(0, 0, 0,100)); //グレー,背景透過
+    endGamePanelShape.setOrigin(endGamePanelShape.getSize()/ 2.0f);
+    endGamePanelShape.setOutlineThickness(5);
+    endGamePanelShape.setOutlineColor(sf::Color::White);
+
+    goTitleButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
+    goTitleButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    goTitleButtonShape.setOrigin(goTitleButtonShape.getSize() / 2.0f);
+    goTitleButtonShape.setOutlineThickness(2);
+    goTitleButtonShape.setOutlineColor(sf::Color::White);
+
+    goTitleButtonText.setString("GoTitle");
+    goTitleButtonText.setCharacterSize(18);
+    goTitleButtonText.setFillColor(sf::Color::White);
+    sf::FloatRect goTitletextBounds = goTitleButtonText.getLocalBounds();
+    goTitleButtonText.setOrigin(goTitletextBounds.left + goTitletextBounds.width / 2.0f, goTitletextBounds.top + goTitletextBounds.height / 2.0f);
+
+    pauseMenuText.setString("Puase");
+    pauseMenuText.setCharacterSize(50);
+    pauseMenuText.setFillColor(sf::Color::White);
+    sf::FloatRect pauseRect = pauseMenuText.getLocalBounds();
+    pauseMenuText.setOrigin(pauseRect.width / 2.0f, pauseRect.top + pauseRect.height / 2.0f);
+
+    continueButtonShape.setSize(sf::Vector2f(300.0f, 60.0f));
+    continueButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    continueButtonShape.setOrigin(continueButtonShape.getSize() / 2.0f);
+    continueButtonShape.setOutlineThickness(2);
+    continueButtonShape.setOutlineColor(sf::Color::White);
+
+    continueButtonText.setString("CONTINUE");
+    continueButtonText.setCharacterSize(30);
+    continueButtonText.setFillColor(sf::Color::White);
+    sf::FloatRect continueRect = continueButtonText.getLocalBounds();
+    continueButtonText.setOrigin(continueRect.left + continueRect.width / 2.0f, continueRect.top + continueRect.height / 2.0f);
+
+    finishButtonShape.setSize(sf::Vector2f(300.0f, 60.0f));
+    finishButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    finishButtonShape.setOrigin(finishButtonShape.getSize().x / 2.0f,finishButtonShape.getSize().y / 2.0f);
+    finishButtonShape.setOutlineThickness(2);
+    finishButtonShape.setOutlineColor(sf::Color::White);
+
+    finishButtonText.setString("FINISH");
+    finishButtonText.setCharacterSize(30);
+    finishButtonText.setFillColor(sf::Color::White);
+    sf::FloatRect finishRect = finishButtonText.getLocalBounds();
+    finishButtonText.setOrigin(finishRect.left + finishRect.width / 2.0f, finishRect.top + finishRect.height / 2.0f);
+
+    menuButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
+    menuButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    menuButtonShape.setOutlineThickness(2);
+    menuButtonShape.setOutlineColor(sf::Color::White);
+
+    menuButtonText.setString("Menu");
+    menuButtonText.setCharacterSize(18);
+    menuButtonText.setFillColor(sf::Color::White);
+    sf::FloatRect menuRect = menuButtonText.getLocalBounds();
+    menuButtonText.setOrigin(menuRect.left + menuRect.width / 2.0f, menuRect.top + menuRect.height / 2.0f);
+
+    easyButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
+    easyButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー（数字が大きいほど白） 
+    easyButtonShape.setOrigin(easyButtonShape.getSize().x / 2.0f,easyButtonShape.getSize().y / 2.0f-60.0f);
+    easyButtonShape.setOutlineThickness(10);
+    easyButtonShape.setOutlineColor(sf::Color::White);
+
     easyButtonText.setFillColor(sf::Color::Black);
     easyButtonText.setOutlineColor(sf::Color::Green);
     easyButtonText.setOutlineThickness(8.0f);
     easyButtonText.setCharacterSize(48);
     easyButtonText.setString("Easy"); // 静的なテキストもここで設定
+    sf::FloatRect easyRect = easyButtonText.getLocalBounds();
+    easyButtonText.setOrigin(easyRect.width / 2.0f, easyRect.top + easyRect.height / 2.0f);
+
+    normalButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
+    normalButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
+    normalButtonShape.setOrigin(normalButtonShape.getSize() / 2.0f);
+    normalButtonShape.setOutlineThickness(10);
+    normalButtonShape.setOutlineColor(sf::Color::White);
 
     normalButtonText.setFillColor(sf::Color::Black);
     normalButtonText.setOutlineColor(sf::Color::Blue);
     normalButtonText.setOutlineThickness(8.0f);
     normalButtonText.setCharacterSize(48);
     normalButtonText.setString("Normal");
+    sf::FloatRect normalRect = normalButtonText.getLocalBounds();
+    normalButtonText.setOrigin(normalRect.left + normalRect.width / 2.0f, normalRect.top + normalRect.height / 2.0f);
+
+    hardButtonShape.setSize(sf::Vector2f(400.0f, 100.0f));
+    hardButtonShape.setFillColor(sf::Color(100, 100, 100)); //グレー
+    hardButtonShape.setOrigin(hardButtonShape.getSize().x / 2.0f,hardButtonShape.getSize().y / 2.0f+60.0f);
+    hardButtonShape.setOutlineThickness(10);
+    hardButtonShape.setOutlineColor(sf::Color::White);
 
     hardButtonText.setFillColor(sf::Color::Black);
     hardButtonText.setOutlineColor(sf::Color::Red);
     hardButtonText.setOutlineThickness(8.0f);
     hardButtonText.setCharacterSize(48);
     hardButtonText.setString("Difficult");
+    sf::FloatRect hardRect = hardButtonText.getLocalBounds();
+    hardButtonText.setOrigin(hardRect.left+hardRect.width/2.0f,hardRect.top+hardRect.height/2.0f);
 
     titleText.setFillColor(sf::Color::Black);
     titleText.setOutlineColor(sf::Color::White);
     titleText.setOutlineThickness(20.0f);
     titleText.setCharacterSize(120);
     titleText.setString("MyMineSweeper");
+    sf::FloatRect titleRect = titleText.getLocalBounds();
+    titleText.setOrigin(titleRect.width/2.0f,titleRect.top + titleRect.height / 2.0f);
+
+    winText.setString("You Win!");
+    winText.setCharacterSize(48);
+    winText.setFillColor(sf::Color::Green);
+    sf::FloatRect winRect=winText.getLocalBounds();
+    winText.setOrigin(winRect.width/2.0f,winRect.top+winRect.height/2.0f);
+
+    gameOverText.setString("Game Over!");
+    gameOverText.setCharacterSize(30); //サイズ
+    gameOverText.setFillColor(sf::Color::Red);
+    sf::FloatRect goRect=gameOverText.getLocalBounds();
+    gameOverText.setOrigin(goRect.width/2.0f,goRect.top+goRect.height/2.0f);
+    
+    timeDisplayShape.setSize(sf::Vector2f(200.0f, 100.0f));//横200、縦100
+    timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒            timeDisplayShape.setOrigin(timeDisplayShape.getSize().x / 2.0f,timeDisplayShape.getSize().y / 2.0f);
+    timeDisplayShape.setOutlineThickness(2);
+    timeDisplayShape.setOrigin(timeDisplayShape.getSize() / 2.0f);
+    timeDisplayShape.setOutlineColor(sf::Color::White);//ボックスの枠線の色
+
+    timeBoxText.setCharacterSize(30);
+    timeBoxText.setFillColor(sf::Color::White);
+    timeBoxText.setString("Time");
+    sf::FloatRect timeBoxRect = timeBoxText.getLocalBounds();
+    timeBoxText.setOrigin(timeBoxRect.width / 2.0f, timeBoxRect.top + timeBoxRect.height / 2.0f);
+
+    timeDisplayText.setCharacterSize(30);
+    timeDisplayText.setFillColor(sf::Color::White);
+    timeDisplayText.setString("0");//いったん適当なものをいれて以下で原点を合わせられるように
+    sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
+    timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
