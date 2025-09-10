@@ -13,6 +13,7 @@ class GameUI{
         sf::Text winText;//勝利時のテキスト
         sf::Text titleText;//タイトルのテキスト
         sf::Text pauseMenuText;//ポーズメニューのテキスト
+        sf::RectangleShape pauseMenuPanelShape;//ポーズメニューのボックス
         sf::RectangleShape goTitleButtonShape;//タイトルに戻るボタンの形
         sf::Text goTitleButtonText;//タイトルに戻るボタンのテキスト
         sf::RectangleShape menuButtonShape;//メニューボタンの形
@@ -22,11 +23,11 @@ class GameUI{
         sf::RectangleShape finishButtonShape;//
         sf::Text finishButtonText;//
         //sf::ConvexShape easyButtonShape;
-        sf::RectangleShape easyButtonShape;//
+        sf::ConvexShape easyButtonShape;//
         sf::Text easyButtonText;//
-        sf::RectangleShape normalButtonShape;//
+        sf::ConvexShape normalButtonShape;//
         sf::Text normalButtonText;//
-        sf::RectangleShape hardButtonShape;//
+        sf::ConvexShape hardButtonShape;//
         sf::Text hardButtonText;//
         sf::RectangleShape timeDisplayShape;//経過時間表示の枠
         sf::Text timeBoxText;//Timeって文字表示
@@ -34,6 +35,8 @@ class GameUI{
         sf::Clock gameClock;//タイマー使用時
         sf::Time totalElapsedTime;//合計の経過時間（この時間を表示）
         sf::Time elapsedTimeWhenPaused;//ポーズ時の経過時間
+        sf::RectangleShape visualGuidance_glayLine;//メインメニューのグレーのライン
+        sf::RectangleShape visualGuidance_blackLine;
 
         int windowWidth;//
         int windowHeight;//
@@ -50,6 +53,7 @@ class GameUI{
     void pauseTimer();//ポーズ再開後の時間を保持（停止）するための関数
     void updateTimer(GameState currentState);//時間表示の関数
     void setFont(const sf::Font& loadedFont);//フォントを読み込み
+    void setMainFont(const sf::Font& loadedMainFont);//メインメニューのフォント
     void initializeStyles();
     void Draw(sf::RenderWindow& window,GameState currentState) const;
     bool isGoTitleButtonClicked(const sf::Vector2i& mousePos) const;
