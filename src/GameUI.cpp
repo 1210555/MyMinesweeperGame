@@ -74,6 +74,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
     visualGuidance_blackLine.setPosition(centerX+600.0f,centerY);
 
+<<<<<<< HEAD
     m_reverseColorTitleText.setPosition(centerX,uiOffset);
     m_reverseColorEasyText.setPosition(centerX,centerY-45.0f);
     m_reverseColorNormalText.setPosition(centerX,centerY+centerY/3-55.0f);
@@ -81,6 +82,24 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     m_reverseColorEasyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);
     m_reverseColorNormalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
     m_reverseColorHardButtonShape.setPosition(centerX,centerY+centerY*2/3);
+=======
+
+    std::vector<sf::Text*> allTexts={&titleText,&easyButtonText,&normalButtonText,&hardButtonText};
+
+    for(sf::Text* textPtr:allTexts){
+        sf::Text& currentText=*textPtr;
+        sf::Vector2f textWorldPos=currentText.getPosition();
+
+        bool isInDarkArea=(textWorldPos.x>centerX&&textWorldPos.y>centerY);
+        /*if(isInDarkArea){
+            currentText.setFillColor(sf::Color::White);      // 内側を白に
+            currentText.setOutlineColor(sf::Color::Black); // フチを黒に
+        }else{ // 黒いエリア外（青い領域）にある場合
+            currentText.setFillColor(sf::Color::Black);     // 内側を黒に
+            currentText.setOutlineColor(sf::Color::White);  // フチを白に
+        }    */
+    }
+>>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 //タイマー表示
 void GameUI::updateTimer(GameState currentState){
@@ -117,8 +136,11 @@ void GameUI::setFont(const sf::Font& loadedFont){
     pauseMenuText.setFont(loadedFont);
     //Timeをテキスト表示
     timeBoxText.setFont(loadedFont);
+<<<<<<< HEAD
 
     
+=======
+>>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 
 void GameUI::setMainFont(const sf::Font& loadedMainFont){
@@ -138,11 +160,14 @@ void GameUI::setMainFont(const sf::Font& loadedMainFont){
     finishButtonText.setFont(loadedMainFont);
     //時間の表示
     timeDisplayText.setFont(loadedMainFont);
+<<<<<<< HEAD
 
     m_reverseColorTitleText.setFont(loadedMainFont);
     m_reverseColorEasyText.setFont(loadedMainFont);
     m_reverseColorNormalText.setFont(loadedMainFont);
     m_reverseColorHardText.setFont(loadedMainFont);
+=======
+>>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 
 void GameUI::initializeStyles(){
@@ -307,6 +332,7 @@ void GameUI::initializeStyles(){
     visualGuidance_glayLine.setRotation(30.0f);
 
     visualGuidance_blackLine.setSize(sf::Vector2f(1000.0f,2000.0f));
+<<<<<<< HEAD
     visualGuidance_blackLine.setFillColor(sf::Color(0,0,0));
     visualGuidance_blackLine.setOrigin(visualGuidance_blackLine.getSize().x/2.0f,visualGuidance_blackLine.getSize().y/2.0f);
     visualGuidance_blackLine.setRotation(30.0f);
@@ -383,6 +409,11 @@ void GameUI::initializeStyles(){
     if(!m_shapeClipperShader.loadFromFile("assets/shaders/shape_clipper.frag",sf::Shader::Fragment)){
         std::cout<<"Error loading shape shader"<<std::endl;
     }
+=======
+    visualGuidance_blackLine.setFillColor(sf::Color(0,0,0,240));
+    visualGuidance_blackLine.setOrigin(visualGuidance_blackLine.getSize().x/2.0f,visualGuidance_blackLine.getSize().y/2.0f);
+    visualGuidance_blackLine.setRotation(30.0f);
+>>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
@@ -447,8 +478,13 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         window.draw(hardButtonShape);
         window.draw(m_reverseColorHardButtonShape,shapeStates);
         window.draw(hardButtonText);
+<<<<<<< HEAD
         window.draw(m_reverseColorHardText,states);
 
+=======
+        window.draw(visualGuidance_glayLine);
+        window.draw(visualGuidance_blackLine);
+>>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
     }else if(currentState==GameState::PauseMenu){
         window.draw(pauseMenuText);
         window.draw(continueButtonShape);

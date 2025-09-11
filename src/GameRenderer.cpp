@@ -57,6 +57,8 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                         text.setFont(font);
                         text.setString(std::to_string(field.Count(i, j)));
                         text.setCharacterSize(24);
+                        text.setOutlineThickness(10);
+                        text.setOutlineColor(sf::Color::Black);
                         // 数字の色
                         if(field.Count(i, j) == 1){
                             text.setFillColor(sf::Color::Blue);
@@ -93,6 +95,8 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                             text.setFont(font);
                             text.setString(std::to_string(count));
                             text.setCharacterSize(24);
+                            text.setOutlineThickness(4);
+                            text.setOutlineColor(sf::Color::White);
                             if (field.Count(i, j) == 1){
                                 text.setFillColor(sf::Color::Blue);
                             }
@@ -126,6 +130,8 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                             text.setFont(font);
                             text.setString(std::to_string(count));
                             text.setCharacterSize(24);
+                            text.setOutlineThickness(4);
+                            text.setOutlineColor(sf::Color::White);
                             if(field.Count(i, j) == 1){
                                 text.setFillColor(sf::Color::Blue);
                             }

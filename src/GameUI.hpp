@@ -37,6 +37,7 @@ class GameUI{
         sf::Time elapsedTimeWhenPaused;//ポーズ時の経過時間
         sf::RectangleShape visualGuidance_glayLine;//メインメニューのグレーのライン
         sf::RectangleShape visualGuidance_blackLine;
+<<<<<<< HEAD
         sf::Text m_reverseColorTitleText;
         sf::Text m_reverseColorEasyText;
         sf::Text m_reverseColorNormalText;
@@ -44,6 +45,8 @@ class GameUI{
         sf::ConvexShape m_reverseColorEasyButtonShape;//
         sf::ConvexShape m_reverseColorNormalButtonShape;//
         sf::ConvexShape m_reverseColorHardButtonShape;//
+=======
+>>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 
 
         mutable sf::Shader m_clipperShader;//シェーダーオブジェクト
