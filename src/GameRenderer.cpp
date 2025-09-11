@@ -31,7 +31,7 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
         float scaleY = static_cast<float>(window.getSize().y) / textureSize.y;
         sprite.setScale(scaleX, scaleY);
         sprite.setPosition(0.f,0.f);
-        window.draw(sprite);
+        //window.draw(sprite);
     }
 
     if(currentState==GameState::Playing||currentState==GameState::Win||currentState==GameState::GameOver){

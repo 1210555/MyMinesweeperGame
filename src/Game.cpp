@@ -8,7 +8,8 @@ Game::Game()
        numRow(5),
        numMine(5),
        font(),// sf::Font をデフォルト構築 (ロードは後で行う)
-       myFont(),
+       myFont(),//
+       fieldFont(),//周囲の地雷数表示のフォント
        window(sf::VideoMode(1600+UI_AREA_HEIGHT, 800), "MineSweeper",sf::Style::Titlebar | sf::Style::Close),
        state(GameState::MainMenu), //ゲーム初期設定
        level(LevelState::BeforeChoosing),//難易度初期設定
@@ -20,8 +21,18 @@ Game::Game()
        gameRenderer(UI_AREA_HEIGHT),
        gameUI(1600+UI_AREA_HEIGHT,800, UI_AREA_HEIGHT)
 {
-    if(!font.loadFromFile("assets/Fonts/ArchivoBlack-Regular.ttf")){
-        std::cerr << "Error loading font: resources/arial.ttf" << std::endl;
+    if(!font.loadFromFile("assets/Fonts/LibertinusKeyboard-Regular.ttf")){
+        std::cerr << "Error loading font: assets/fonts/LibertinusKeyboard-Regular.ttf" << std::endl;
+        window.close();
+        exit(EXIT_FAILURE); // フォントロード失敗時は終了
+    }
+    if(!myFont.loadFromFile("assets/Fonts/FrederickatheGreat-Regular.ttf")){
+        std::cerr << "Error loading font: assets/fonts/FrederickatheGreat-Regular.ttf" << std::endl;
+        window.close();
+        exit(EXIT_FAILURE); // フォントロード失敗時は終了
+    }
+    if(!fieldFont.loadFromFile("assets/Fonts/BitcountPropDouble-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf")){
+        std::cerr << "Error loading font: assets/fonts/BitcountPropDouble-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf" << std::endl;
         window.close();
         exit(EXIT_FAILURE); // フォントロード失敗時は終了
     }
@@ -46,9 +57,11 @@ Game::Game()
     }*/
 
     // ロードしたフォントを GameUI に設定
+    gameUI.setMainFont(myFont);
     gameUI.setFont(font);
     gameUI.initializeStyles();
     gameUI.updateLayout(1600+UI_AREA_HEIGHT,800);
+    
     
 }
 
@@ -83,7 +96,7 @@ void Game::gameLevel(LevelState choosenLevel){
 }
 
 void Game::Run(){
-    int tileSize = 50; //タイルサイズ(ゲーム全体で共通の定数)
+    int tileSize=50; //タイルサイズ(ゲーム全体で共通の定数)
     sf::Event event;
     while(window.isOpen()){
         while (window.pollEvent(event)){
@@ -92,12 +105,12 @@ void Game::Run(){
             }
 
             // マウスのクリック座標の取得とUI部分の調整
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            int x = mousePos.x / tileSize;
-            int y = (mousePos.y - UI_AREA_HEIGHT) / tileSize;
+            sf::Vector2i mousePos=sf::Mouse::getPosition(window);
+            int x=mousePos.x/tileSize;
+            int y=(mousePos.y-UI_AREA_HEIGHT)/tileSize;
 
            // 左クリックの処理
-            if(event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left){
+            if(event.type==sf::Event::MouseButtonPressed && event.mouseButton.button==sf::Mouse::Left){
                 if(state==GameState::MainMenu){
                     if(gameUI.isEasyButtonClicked(mousePos)){
                         level=LevelState::Easy;
@@ -189,10 +202,11 @@ void Game::Run(){
                 }
             }
         }
-        window.clear(sf::Color::Black);//デフォルトの色
+        window.clear(sf::Color(10,100,200));//デフォルトの色
         
         if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win||state==GameState::MainMenu){
-            gameRenderer.display(window, tileSize, state, font, field, field.getOpen(), field.getFlag(),numCol,numRow,numMine);
+            //ここのフォントで周囲の地雷数のフォント変更
+            gameRenderer.display(window, tileSize, state, fieldFont, field, field.getOpen(), field.getFlag(),numCol,numRow,numMine);
         }
         gameUI.updateTimer(state);
         gameUI.Draw(window, state);

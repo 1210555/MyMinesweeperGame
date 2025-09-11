@@ -12,6 +12,7 @@ private:
     const int UI_AREA_HEIGHT;
     sf::Font font;
     sf::Font myFont;
+    sf::Font fieldFont;
     sf::RenderWindow window;
     Field field;
     GameState state;//ゲーム状態の管理
