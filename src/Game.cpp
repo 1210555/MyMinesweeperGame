@@ -61,8 +61,6 @@ Game::Game()
     gameUI.setFont(font);
     gameUI.initializeStyles();
     gameUI.updateLayout(1600+UI_AREA_HEIGHT,800);
-    
-    
 }
 
 // ゲームの状態をリセットする関数
@@ -99,15 +97,18 @@ void Game::Run(){
     int tileSize=50; //タイルサイズ(ゲーム全体で共通の定数)
     sf::Event event;
     while(window.isOpen()){
+            sf::Vector2i mousePos=sf::Mouse::getPosition(window);
+            int x=mousePos.x/tileSize;
+            int y=(mousePos.y-UI_AREA_HEIGHT)/tileSize;
         while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed){
                 window.close();
             }
 
             // マウスのクリック座標の取得とUI部分の調整
-            sf::Vector2i mousePos=sf::Mouse::getPosition(window);
+            /*sf::Vector2i mousePos=sf::Mouse::getPosition(window);
             int x=mousePos.x/tileSize;
-            int y=(mousePos.y-UI_AREA_HEIGHT)/tileSize;
+            int y=(mousePos.y-UI_AREA_HEIGHT)/tileSize;*/
 
            // 左クリックの処理
             if(event.type==sf::Event::MouseButtonPressed && event.mouseButton.button==sf::Mouse::Left){
@@ -202,6 +203,7 @@ void Game::Run(){
                 }
             }
         }
+        gameUI.updateHoverState(mousePos,state);
         window.clear(sf::Color(10,100,200));//デフォルトの色
         
         if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win||state==GameState::MainMenu){

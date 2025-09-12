@@ -1,4 +1,5 @@
 #include "GameUI.hpp" // 対応するヘッダーファイルをインクルード
+#include <cmath>
 #include <iostream>
 
 GameUI::GameUI(int windowWidth, int windowHeight, int offset)
@@ -11,8 +12,8 @@ GameUI::GameUI(int windowWidth, int windowHeight, int offset)
     
 }
 void GameUI::updateLayout(int newWidth,int newHeight){
-    centerX=newWidth/2.0f;//難易度に応じて変更した横幅の中間
-    centerY=newHeight/2.0f;//難易度に応じて変更した縦の長さの中間
+    centerX=newWidth/2.0f;//状態に応じて変更した横幅の中間
+    centerY=newHeight/2.0f;//状態に応じて変更した縦の長さの中間
 
 //この部分はMainTitle時に移すようにしておく。(Playing時にずっと出さなくてもいい気がする)    
     /*leftInstructionText.setString("Left Click: Open Tile");
@@ -74,7 +75,6 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
     visualGuidance_blackLine.setPosition(centerX+600.0f,centerY);
 
-<<<<<<< HEAD
     m_reverseColorTitleText.setPosition(centerX,uiOffset);
     m_reverseColorEasyText.setPosition(centerX,centerY-45.0f);
     m_reverseColorNormalText.setPosition(centerX,centerY+centerY/3-55.0f);
@@ -82,24 +82,16 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     m_reverseColorEasyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);
     m_reverseColorNormalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
     m_reverseColorHardButtonShape.setPosition(centerX,centerY+centerY*2/3);
-=======
 
-    std::vector<sf::Text*> allTexts={&titleText,&easyButtonText,&normalButtonText,&hardButtonText};
+    m_overColorEasyShape.setPosition(centerX,centerY+20.0f);
+    m_overColorNormalShape.setPosition(centerX,centerY+140.0f);//ボックスの縦100+ボックスのアウトライン20=120
+    m_overColorHardShape.setPosition(centerX,centerY+260.0f);
 
-    for(sf::Text* textPtr:allTexts){
-        sf::Text& currentText=*textPtr;
-        sf::Vector2f textWorldPos=currentText.getPosition();
+    m_initialEasyButtonPos = easyButtonShape.getPosition();
+    m_initialNormalButtonPos = normalButtonShape.getPosition();
+    m_initialHardButtonPos = hardButtonShape.getPosition();
 
-        bool isInDarkArea=(textWorldPos.x>centerX&&textWorldPos.y>centerY);
-        /*if(isInDarkArea){
-            currentText.setFillColor(sf::Color::White);      // 内側を白に
-            currentText.setOutlineColor(sf::Color::Black); // フチを黒に
-        }else{ // 黒いエリア外（青い領域）にある場合
-            currentText.setFillColor(sf::Color::Black);     // 内側を黒に
-            currentText.setOutlineColor(sf::Color::White);  // フチを白に
-        }    */
-    }
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
+    createBackgroundGrid(newWidth,newHeight,80);
 }
 //タイマー表示
 void GameUI::updateTimer(GameState currentState){
@@ -136,11 +128,8 @@ void GameUI::setFont(const sf::Font& loadedFont){
     pauseMenuText.setFont(loadedFont);
     //Timeをテキスト表示
     timeBoxText.setFont(loadedFont);
-<<<<<<< HEAD
 
     
-=======
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 
 void GameUI::setMainFont(const sf::Font& loadedMainFont){
@@ -160,14 +149,11 @@ void GameUI::setMainFont(const sf::Font& loadedMainFont){
     finishButtonText.setFont(loadedMainFont);
     //時間の表示
     timeDisplayText.setFont(loadedMainFont);
-<<<<<<< HEAD
 
     m_reverseColorTitleText.setFont(loadedMainFont);
     m_reverseColorEasyText.setFont(loadedMainFont);
     m_reverseColorNormalText.setFont(loadedMainFont);
     m_reverseColorHardText.setFont(loadedMainFont);
-=======
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 
 void GameUI::initializeStyles(){
@@ -241,9 +227,9 @@ void GameUI::initializeStyles(){
     easyButtonShape.setOutlineThickness(10);
     easyButtonShape.setOutlineColor(sf::Color::Black);
 
-    easyButtonText.setFillColor(sf::Color::Black);
+    easyButtonText.setFillColor(sf::Color(1,1,1,200));
     easyButtonText.setOutlineColor(sf::Color::Green);
-    easyButtonText.setOutlineThickness(8.0f);
+    easyButtonText.setOutlineThickness(6.0f);
     easyButtonText.setCharacterSize(48);
     easyButtonText.setString("Easy"); // 静的なテキストもここで設定
     sf::FloatRect easyRect = easyButtonText.getLocalBounds();
@@ -261,9 +247,9 @@ void GameUI::initializeStyles(){
     normalButtonShape.setOutlineThickness(10);
     normalButtonShape.setOutlineColor(sf::Color::Black);
 
-    normalButtonText.setFillColor(sf::Color::Black);
+    normalButtonText.setFillColor(sf::Color(1,1,1,200));
     normalButtonText.setOutlineColor(sf::Color::Blue);
-    normalButtonText.setOutlineThickness(8.0f);
+    normalButtonText.setOutlineThickness(6.0f);
     normalButtonText.setCharacterSize(48);
     normalButtonText.setString("Normal");
     sf::FloatRect normalRect = normalButtonText.getLocalBounds();
@@ -282,9 +268,9 @@ void GameUI::initializeStyles(){
 
     hardButtonText.setFillColor(sf::Color::Black);
     hardButtonText.setOutlineColor(sf::Color::Red);
-    hardButtonText.setOutlineThickness(8.0f);
+    hardButtonText.setOutlineThickness(6.0f);
     hardButtonText.setCharacterSize(48);
-    hardButtonText.setString("Difficult");
+    hardButtonText.setString("Hard");
     sf::FloatRect hardRect = hardButtonText.getLocalBounds();
     hardButtonText.setOrigin(hardRect.left+hardRect.width/2.0f,hardRect.top+hardRect.height/2.0f);
 
@@ -312,7 +298,7 @@ void GameUI::initializeStyles(){
     timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒            timeDisplayShape.setOrigin(timeDisplayShape.getSize().x / 2.0f,timeDisplayShape.getSize().y / 2.0f);
     timeDisplayShape.setOutlineThickness(2);
     timeDisplayShape.setOrigin(timeDisplayShape.getSize() / 2.0f);
-    timeDisplayShape.setOutlineColor(sf::Color::White);//ボックスの枠線の色
+    timeDisplayShape.setOutlineColor(sf::Color::White);
 
     timeBoxText.setCharacterSize(30);
     timeBoxText.setFillColor(sf::Color::White);
@@ -332,7 +318,6 @@ void GameUI::initializeStyles(){
     visualGuidance_glayLine.setRotation(30.0f);
 
     visualGuidance_blackLine.setSize(sf::Vector2f(1000.0f,2000.0f));
-<<<<<<< HEAD
     visualGuidance_blackLine.setFillColor(sf::Color(0,0,0));
     visualGuidance_blackLine.setOrigin(visualGuidance_blackLine.getSize().x/2.0f,visualGuidance_blackLine.getSize().y/2.0f);
     visualGuidance_blackLine.setRotation(30.0f);
@@ -345,27 +330,27 @@ void GameUI::initializeStyles(){
     sf::FloatRect m_reverseColorTitleRect = m_reverseColorTitleText.getLocalBounds();
     m_reverseColorTitleText.setOrigin(m_reverseColorTitleRect.width/2.0f,m_reverseColorTitleRect.top + m_reverseColorTitleRect.height / 2.0f);
 
-    m_reverseColorEasyText.setFillColor(sf::Color::Green);
-    m_reverseColorEasyText.setOutlineColor(sf::Color::Black);
-    m_reverseColorEasyText.setOutlineThickness(8.0f);
+    m_reverseColorEasyText.setFillColor(sf::Color(50,255,50));
+    m_reverseColorEasyText.setOutlineColor(sf::Color(1,1,1,200));
+    m_reverseColorEasyText.setOutlineThickness(6.0f);
     m_reverseColorEasyText.setCharacterSize(48);
-    m_reverseColorEasyText.setString("Easy"); // 静的なテキストもここで設定
+    m_reverseColorEasyText.setString("Easy");
     sf::FloatRect m_reverseColorEasyRect = m_reverseColorEasyText.getLocalBounds();
     m_reverseColorEasyText.setOrigin(m_reverseColorEasyRect.width / 2.0f, m_reverseColorEasyRect.top + m_reverseColorEasyRect.height / 2.0f);
 
-    m_reverseColorNormalText.setFillColor(sf::Color::Blue);
-    m_reverseColorNormalText.setOutlineColor(sf::Color::Black);
-    m_reverseColorNormalText.setOutlineThickness(8.0f);
+    m_reverseColorNormalText.setFillColor(sf::Color(50,50,255));
+    m_reverseColorNormalText.setOutlineColor(sf::Color(1,1,1,200));
+    m_reverseColorNormalText.setOutlineThickness(6.0f);
     m_reverseColorNormalText.setCharacterSize(48);
     m_reverseColorNormalText.setString("Normal");
     sf::FloatRect m_reverseColorNormalRect = m_reverseColorNormalText.getLocalBounds();
     m_reverseColorNormalText.setOrigin(m_reverseColorNormalRect.left + m_reverseColorNormalRect.width / 2.0f, m_reverseColorNormalRect.top + m_reverseColorNormalRect.height / 2.0f);
 
-    m_reverseColorHardText.setFillColor(sf::Color::Red);
-    m_reverseColorHardText.setOutlineColor(sf::Color::Black);
-    m_reverseColorHardText.setOutlineThickness(8.0f);
+    m_reverseColorHardText.setFillColor(sf::Color(255,50,50));
+    m_reverseColorHardText.setOutlineColor(sf::Color(1,1,1,200));
+    m_reverseColorHardText.setOutlineThickness(6.0f);
     m_reverseColorHardText.setCharacterSize(48);
-    m_reverseColorHardText.setString("Difficult");
+    m_reverseColorHardText.setString("Hard");
     sf::FloatRect m_reverseColorHardRect = m_reverseColorHardText.getLocalBounds();
     m_reverseColorHardText.setOrigin(m_reverseColorHardRect.left + m_reverseColorHardRect.width / 2.0f, m_reverseColorHardRect.top + m_reverseColorHardRect.height / 2.0f);
 
@@ -374,7 +359,7 @@ void GameUI::initializeStyles(){
     m_reverseColorEasyButtonShape.setPoint(1,sf::Vector2f(400,30));
     m_reverseColorEasyButtonShape.setPoint(2,sf::Vector2f(420,110));
     m_reverseColorEasyButtonShape.setPoint(3,sf::Vector2f(10,100));
-    m_reverseColorEasyButtonShape.setFillColor(sf::Color(10,100,200)); //グレー（数字が大きいほど白)
+    m_reverseColorEasyButtonShape.setFillColor(sf::Color(10,100,200));
     sf::FloatRect reverseColrEasyBounds=m_reverseColorEasyButtonShape.getLocalBounds();
     m_reverseColorEasyButtonShape.setOrigin(reverseColrEasyBounds.left+reverseColrEasyBounds.width/2.0f,reverseColrEasyBounds.top+reverseColrEasyBounds.height/2.0f-60.0f);
     m_reverseColorEasyButtonShape.setOutlineThickness(10);
@@ -401,7 +386,33 @@ void GameUI::initializeStyles(){
     m_reverseColorHardButtonShape.setOrigin(reverseColrHardBounds.left+reverseColrHardBounds.width/2.0f,reverseColrHardBounds.top+reverseColrHardBounds.height/2.0f+60.0f);
     m_reverseColorHardButtonShape.setOutlineThickness(10);
     m_reverseColorHardButtonShape.setOutlineColor(sf::Color::Black);
-    
+
+    m_overColorEasyShape.setPointCount(4);
+    m_overColorEasyShape.setPoint(0,sf::Vector2f(0,0));
+    m_overColorEasyShape.setPoint(1,sf::Vector2f(396,-17));
+    m_overColorEasyShape.setPoint(2,sf::Vector2f(403,93));
+    m_overColorEasyShape.setPoint(3,sf::Vector2f(-22,118));
+    sf::FloatRect overColorEasyBounds=m_overColorEasyShape.getLocalBounds();
+    m_overColorEasyShape.setFillColor(sf::Color(200,200,200,100));
+    m_overColorEasyShape.setOrigin(overColorEasyBounds.left+overColorEasyBounds.width/2.0f,overColorEasyBounds.top+overColorEasyBounds.height/2.0f+60.0f);
+
+    m_overColorNormalShape.setPointCount(4);
+    m_overColorNormalShape.setPoint(0,sf::Vector2f(0,0));
+    m_overColorNormalShape.setPoint(1,sf::Vector2f(420,-18));
+    m_overColorNormalShape.setPoint(2,sf::Vector2f(411,93));
+    m_overColorNormalShape.setPoint(3,sf::Vector2f(-15,113));
+    sf::FloatRect overColorNormalBounds=m_overColorNormalShape.getLocalBounds();
+    m_overColorNormalShape.setFillColor(sf::Color(200,200,200,100));
+    m_overColorNormalShape.setOrigin(overColorNormalBounds.left+overColorNormalBounds.width/2.0f,overColorNormalBounds.top+overColorNormalBounds.height/2.0f+60.0f);
+
+    m_overColorHardShape.setPointCount(4);
+    m_overColorHardShape.setPoint(0,sf::Vector2f(0,0));
+    m_overColorHardShape.setPoint(1,sf::Vector2f(415,-10));
+    m_overColorHardShape.setPoint(2,sf::Vector2f(404,93));
+    m_overColorHardShape.setPoint(3,sf::Vector2f(-6,110));
+    sf::FloatRect overColorHardBounds=m_overColorHardShape.getLocalBounds();
+    m_overColorHardShape.setFillColor(sf::Color(200,200,200,100));
+    m_overColorHardShape.setOrigin(overColorHardBounds.left+overColorHardBounds.width/2.0f,overColorHardBounds.top+overColorHardBounds.height/2.0f+60.0f);
 
     if(!m_clipperShader.loadFromFile("assets/shaders/clipper.frag",sf::Shader::Fragment)){
         std::cout<<"Error loading shader"<<std::endl;
@@ -409,11 +420,6 @@ void GameUI::initializeStyles(){
     if(!m_shapeClipperShader.loadFromFile("assets/shaders/shape_clipper.frag",sf::Shader::Fragment)){
         std::cout<<"Error loading shape shader"<<std::endl;
     }
-=======
-    visualGuidance_blackLine.setFillColor(sf::Color(0,0,0,240));
-    visualGuidance_blackLine.setOrigin(visualGuidance_blackLine.getSize().x/2.0f,visualGuidance_blackLine.getSize().y/2.0f);
-    visualGuidance_blackLine.setRotation(30.0f);
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
@@ -458,33 +464,42 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         m_shapeClipperShader.setUniform("lineC",c);
         sf::RenderStates shapeStates;
         shapeStates.shader=&m_shapeClipperShader;
-//タイトルテキスト
+
+    //背景のグリッド
+        window.draw(m_backgroundGrid);
+
+    //タイトルテキスト
         window.draw(titleText);
         window.draw(m_reverseColorTitleText,states);
+        
 
-//Easyのボタンテキスト
+    //Easyのボタンテキスト
         window.draw(easyButtonShape);
         window.draw(m_reverseColorEasyButtonShape,shapeStates);
         window.draw(easyButtonText);
         window.draw(m_reverseColorEasyText,states);
+        if(m_isEasyButtonHovered){
+            window.draw(m_overColorEasyShape);
+        }
 
-//Normalのボタンテキスト
+    //Normalのボタンテキスト
         window.draw(normalButtonShape);
         window.draw(m_reverseColorNormalButtonShape,shapeStates);
         window.draw(normalButtonText);
         window.draw(m_reverseColorNormalText,states);
+        if(m_isNormalButtonHovered){
+            window.draw(m_overColorNormalShape);
+        }
 
-//Hardのボタンテキスト
+    //Hardのボタンテキスト
         window.draw(hardButtonShape);
         window.draw(m_reverseColorHardButtonShape,shapeStates);
         window.draw(hardButtonText);
-<<<<<<< HEAD
         window.draw(m_reverseColorHardText,states);
+        if(m_isHardButtonHovered){
+            window.draw(m_overColorHardShape);
+        }
 
-=======
-        window.draw(visualGuidance_glayLine);
-        window.draw(visualGuidance_blackLine);
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
     }else if(currentState==GameState::PauseMenu){
         window.draw(pauseMenuText);
         window.draw(continueButtonShape);
@@ -507,9 +522,106 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
     }
 }
 
+void GameUI::updateHoverState(const sf::Vector2i& mousePos,GameState currentState){
+    if(currentState==GameState::MainMenu){
+        bool isAnyButtonHovered=false;
+        float time=m_hoverClock.getElapsedTime().asSeconds();
+        float amplitude=5.0f;
+        float velocity=5.0f;
+        float yOffset=std::sin(time*amplitude)*velocity;//
+    //Easyのホバー
+        if(isEasyButtonClicked(mousePos)){
+            easyButtonShape.setScale(1.05f,1.05f);
+            m_reverseColorEasyButtonShape.setScale(1.05f,1.05f);
+            easyButtonText.setScale(1.05f,1.05f);
+            m_reverseColorEasyText.setScale(1.05f,1.05f);
+            isAnyButtonHovered=true;
+            m_isEasyButtonHovered=true;
+
+            easyButtonShape.setPosition(m_initialEasyButtonPos.x, m_initialEasyButtonPos.y + yOffset);
+            m_reverseColorEasyButtonShape.setPosition(m_initialEasyButtonPos.x, m_initialEasyButtonPos.y + yOffset);
+
+            m_overColorEasyShape.setScale(1.05f,1.05f);
+        }else{
+            m_isEasyButtonHovered=false;
+            easyButtonShape.setScale(1.0f,1.0f);
+            m_reverseColorEasyButtonShape.setScale(1.0f,1.0f);
+            easyButtonText.setScale(1.0f,1.0f);
+            m_reverseColorEasyText.setScale(1.0f,1.0f);
+            easyButtonShape.setPosition(m_initialEasyButtonPos);
+            m_reverseColorEasyButtonShape.setPosition(m_initialEasyButtonPos);
+        }
+    //Nomalのホバー
+        if(isNormalButtonClicked(mousePos)){
+            normalButtonShape.setScale(1.05f,1.05f);
+            m_reverseColorNormalButtonShape.setScale(1.05f,1.05f);
+            normalButtonText.setScale(1.05f,1.05f);
+            m_reverseColorNormalText.setScale(1.05f,1.05f);
+            isAnyButtonHovered=true;
+            m_isNormalButtonHovered = true;
+
+            normalButtonShape.setPosition(m_initialNormalButtonPos.x, m_initialNormalButtonPos.y + yOffset);
+            m_reverseColorNormalButtonShape.setPosition(m_initialNormalButtonPos.x, m_initialNormalButtonPos.y + yOffset);
+        }else{
+            m_isNormalButtonHovered = false;
+            normalButtonShape.setScale(1.0f,1.0f);
+            m_reverseColorNormalButtonShape.setScale(1.0f,1.0f);
+            normalButtonText.setScale(1.0f,1.0f);
+            m_reverseColorNormalText.setScale(1.0f,1.0f);
+            normalButtonShape.setPosition(m_initialNormalButtonPos);
+            m_reverseColorNormalButtonShape.setPosition(m_initialNormalButtonPos);
+        }
+    //Hardのホバー
+        if(isHardButtonClicked(mousePos)){
+            hardButtonShape.setScale(1.05f,1.05f);
+            m_reverseColorHardButtonShape.setScale(1.05f,1.05f);
+            hardButtonText.setScale(1.05f,1.05f);
+            m_reverseColorHardText.setScale(1.05f,1.05f);
+            isAnyButtonHovered=true;
+            m_isHardButtonHovered = true;
+
+            hardButtonShape.setPosition(m_initialHardButtonPos.x, m_initialHardButtonPos.y + yOffset);
+            m_reverseColorHardButtonShape.setPosition(m_initialHardButtonPos.x, m_initialHardButtonPos.y + yOffset);
+        }else{
+            m_isHardButtonHovered = false;
+            hardButtonShape.setScale(1.0f,1.0f);
+            m_reverseColorHardButtonShape.setScale(1.0f,1.0f);
+            hardButtonText.setScale(1.0f,1.0f);
+            m_reverseColorHardText.setScale(1.0f,1.0f);
+            hardButtonShape.setPosition(m_initialHardButtonPos);
+            m_reverseColorHardButtonShape.setPosition(m_initialHardButtonPos);
+        }
+        if(!isAnyButtonHovered){
+            m_hoverClock.restart();
+        }
+    }
+}
+
+void GameUI::createBackgroundGrid(unsigned int windowWodth,unsigned int windowHeight,int spacing){
+    m_backgroundGrid.setPrimitiveType(sf::Lines);
+    m_backgroundGrid.clear();
+std::cout<<"create"<<std::endl;
+    sf::Color gridColor(255,255,255,30);
+
+    //垂直線
+    for(int x=0;x<=windowWidth;x+=spacing){
+        //垂直線の上端
+        m_backgroundGrid.append(sf::Vertex(sf::Vector2f(x,0),gridColor));
+        //垂直線の下端
+        m_backgroundGrid.append(sf::Vertex(sf::Vector2f(x,windowHeight),gridColor));
+    }
+    //spacing=0;
+    //平行線
+    for(int y=0;y<=windowHeight;y+=spacing){
+        //平行線の上端
+        m_backgroundGrid.append(sf::Vertex(sf::Vector2f(0,y),gridColor));
+        //平行線の下端
+        m_backgroundGrid.append(sf::Vertex(sf::Vector2f(windowWidth,y),gridColor));
+    }
+}
+
 // マウス位置がボタンの描画領域内にあるかを判定
 bool GameUI::isGoTitleButtonClicked(const sf::Vector2i& mousePos) const {
-    std::cout<<"gotitle"<<std::endl;
     return goTitleButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 

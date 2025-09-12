@@ -37,7 +37,6 @@ class GameUI{
         sf::Time elapsedTimeWhenPaused;//ポーズ時の経過時間
         sf::RectangleShape visualGuidance_glayLine;//メインメニューのグレーのライン
         sf::RectangleShape visualGuidance_blackLine;
-<<<<<<< HEAD
         sf::Text m_reverseColorTitleText;
         sf::Text m_reverseColorEasyText;
         sf::Text m_reverseColorNormalText;
@@ -45,9 +44,14 @@ class GameUI{
         sf::ConvexShape m_reverseColorEasyButtonShape;//
         sf::ConvexShape m_reverseColorNormalButtonShape;//
         sf::ConvexShape m_reverseColorHardButtonShape;//
-=======
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
-
+        sf::ConvexShape m_overColorEasyShape;
+        sf::ConvexShape m_overColorNormalShape;
+        sf::ConvexShape m_overColorHardShape;
+        sf::Clock m_hoverClock;//ホバーエフェクトの浮き沈み用
+        sf::Vector2f m_initialEasyButtonPos;
+        sf::Vector2f m_initialNormalButtonPos;
+        sf::Vector2f m_initialHardButtonPos;
+        sf::VertexArray m_backgroundGrid;
 
         mutable sf::Shader m_clipperShader;//シェーダーオブジェクト
         mutable sf::Shader m_shapeClipperShader;
@@ -58,6 +62,9 @@ class GameUI{
         int nowSecond;//経過した時間
         float centerX;//
         float centerY;//
+        bool m_isEasyButtonHovered = false;
+        bool m_isNormalButtonHovered = false;
+        bool m_isHardButtonHovered = false;
 
     public:
         GameUI(int windowWidth, int windowHeight, int offset);
@@ -69,6 +76,8 @@ class GameUI{
     void setFont(const sf::Font& loadedFont);//フォントを読み込み
     void setMainFont(const sf::Font& loadedMainFont);//メインメニューのフォント
     void initializeStyles();
+    void updateHoverState(const sf::Vector2i& mousePos,GameState currentState);
+    void createBackgroundGrid(unsigned int windowWidth,unsigned int windowHeight,int spacing);
     void Draw(sf::RenderWindow& window,GameState currentState) const;
     bool isGoTitleButtonClicked(const sf::Vector2i& mousePos) const;
     bool isMenuButtonClicked(const sf::Vector2i& mousePos) const;
