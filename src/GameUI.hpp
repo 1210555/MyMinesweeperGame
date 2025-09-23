@@ -72,6 +72,7 @@ class GameUI{
     void updateLayout(int newWidth,int newHeight);//難易度変更時の盤面サイズ変更
     void startGameTimer();
     void pauseTimer();//ポーズ再開後の時間を保持（停止）するための関数
+    void continueGameTimer();
     void updateTimer(GameState currentState);//時間表示の関数
     void setFont(const sf::Font& loadedFont);//フォントを読み込み
     void setMainFont(const sf::Font& loadedMainFont);//メインメニューのフォント

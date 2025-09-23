@@ -12,6 +12,8 @@ private:
     std::map<std::string, sf::Texture> textures;
     //UIエリアによるY座標のずれ
     int uiOffset;
+    sf::Text text;
+    sf::Text totalMineText;
 
 public:
     GameRenderer(int offset);
@@ -27,7 +29,8 @@ public:
         const std::vector<std::vector<bool>>& flagged,// フラグが立っているマスの状態
         int numCol,
         int numRow,
-        int numMine
+        int numMine,
+        int uiOffset
     );
 };
 

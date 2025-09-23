@@ -84,8 +84,8 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     m_reverseColorHardButtonShape.setPosition(centerX,centerY+centerY*2/3);
 
     m_overColorEasyShape.setPosition(centerX,centerY+20.0f);
-    m_overColorNormalShape.setPosition(centerX,centerY+140.0f);//ボックスの縦100+ボックスのアウトライン20=120
-    m_overColorHardShape.setPosition(centerX,centerY+260.0f);
+    m_overColorNormalShape.setPosition(centerX,centerY+150.0f);//ボックスの縦100+ボックスのアウトライン20=120
+    m_overColorHardShape.setPosition(centerX,centerY+270.0f);
 
     m_initialEasyButtonPos = easyButtonShape.getPosition();
     m_initialNormalButtonPos = normalButtonShape.getPosition();
@@ -109,6 +109,11 @@ void GameUI::pauseTimer(){
     //ポーズしたとき経過した時間
     elapsedTimeWhenPaused+=gameClock.getElapsedTime();
 }
+
+void GameUI::continueGameTimer(){
+    gameClock.restart();
+}
+
 
 void GameUI::startGameTimer(){
     elapsedTimeWhenPaused=sf::Time::Zero;//ポーズ画面から終了したときも時間を０に
@@ -369,7 +374,7 @@ void GameUI::initializeStyles(){
     m_reverseColorNormalButtonShape.setPoint(0,sf::Vector2f(0,0));
     m_reverseColorNormalButtonShape.setPoint(1,sf::Vector2f(400,20));
     m_reverseColorNormalButtonShape.setPoint(2,sf::Vector2f(430,110));
-    m_reverseColorNormalButtonShape.setPoint(3,sf::Vector2f(10,100));
+    m_reverseColorNormalButtonShape.setPoint(3,sf::Vector2f(10,95));
     sf::FloatRect reverseColrNormalBounds=m_reverseColorNormalButtonShape.getLocalBounds();
     m_reverseColorNormalButtonShape.setFillColor(sf::Color(10,100,200)); //グレー
     m_reverseColorNormalButtonShape.setOrigin(reverseColrNormalBounds.left+reverseColrNormalBounds.width/2.0f,reverseColrNormalBounds.top+reverseColrNormalBounds.height/2.0f);
@@ -423,14 +428,20 @@ void GameUI::initializeStyles(){
 }
 
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
-    if (currentState == GameState::Playing){
-        /*window.draw(leftInstructionText);
-        window.draw(rightInstructionText);*/
+    if(currentState==GameState::Playing){
         window.draw(menuButtonShape);
         window.draw(menuButtonText);
         window.draw(timeDisplayShape);
         window.draw(timeBoxText);
         window.draw(timeDisplayText);
+    }else if(currentState==GameState::PauseMenu){
+        window.clear(sf::Color(100,100,100,200));
+        window.draw(pauseMenuText);
+        window.draw(continueButtonShape);
+        window.draw(continueButtonText);
+        window.draw(finishButtonShape);
+        window.draw(finishButtonText);
+        
     }else if(currentState==GameState::MainMenu){
         window.draw(visualGuidance_glayLine);
         window.draw(visualGuidance_blackLine);
@@ -441,11 +452,10 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
     // 2. 直線の「傾き」をベクトルで定義する
     //    (x, y) = (横に1進むと, 縦にどれだけ進むか)
     //    Y座標は下向きなので、右上がりの傾きは Y がマイナスになります。
-    //    この値を色々変えて、好きな傾きに調整してください。
-        sf::Vector2f slopeVector(-1.0f, -1.73f); // 例：左に1進むと、下に1.73進む傾き
+        sf::Vector2f slopeVector(-1.0f, -1.73f); //左に1進むと、下に1.73進む傾き
 
     // 3. 基準点と傾きから、境界線の2点を計算する
-    //    (非常に大きな数値を掛けて、線が必ず画面を横切るようにする)
+    //(非常に大きな数値を掛けて、線が必ず画面を横切るようにする)
         sf::Vector2f linePoint1 = center + slopeVector * 10000.0f;
         sf::Vector2f linePoint2 = center - slopeVector * 10000.0f;
 
@@ -500,12 +510,6 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
             window.draw(m_overColorHardShape);
         }
 
-    }else if(currentState==GameState::PauseMenu){
-        window.draw(pauseMenuText);
-        window.draw(continueButtonShape);
-        window.draw(continueButtonText);
-        window.draw(finishButtonShape);
-        window.draw(finishButtonText);
     }else{
         //GameOverかWin時のテキストやボックス
         window.draw(timeDisplayShape);

@@ -177,7 +177,7 @@ void Game::Run(){
                     } 
                 }else if(state==GameState::PauseMenu){
                     if(gameUI.isContinueButtonClicked(mousePos)){
-                        gameUI.startGameTimer();
+                        gameUI.continueGameTimer();
                         state=GameState::Playing;
                     }else if(gameUI.isFinishButtonClicked(mousePos)){
                         window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
@@ -208,7 +208,7 @@ void Game::Run(){
         
         if(state==GameState::Playing||state==GameState::GameOver||state==GameState::Win||state==GameState::MainMenu){
             //ここのフォントで周囲の地雷数のフォント変更
-            gameRenderer.display(window, tileSize, state, fieldFont, field, field.getOpen(), field.getFlag(),numCol,numRow,numMine);
+            gameRenderer.display(window, tileSize, state, fieldFont, field, field.getOpen(), field.getFlag(),numCol,numRow,numMine,UI_AREA_HEIGHT);
         }
         gameUI.updateTimer(state);
         gameUI.Draw(window, state);

@@ -4,10 +4,10 @@
 GameRenderer::GameRenderer(int offset) : uiOffset(offset){
     // テクスチャファイルへパスを定義
     std::map<std::string, std::string> files={
-        {"white","resources/GroundWhite.jpg"},
-        {"flag", "resources/Flag2.png"},
-        {"mine","resources/Mine.jpg"},
-        {"boom","resources/Boom.jpg"}
+        {"white","assets/pictures/GroundWhite.jpg"},
+        {"flag", "assets/pictures/Flag2.png"},
+        {"mine","assets/pictures/bomb.png"},
+        //{"boom","assets/pictures/bomb.png"}
     };
 
     // 全てのテクスチャをループで読み込み、textures マップに格納
@@ -20,7 +20,7 @@ GameRenderer::GameRenderer(int offset) : uiOffset(offset){
     }
 }
 
-void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState currentState, const sf::Font& font, const Field& field, const std::vector<std::vector<bool>>& opened, const std::vector<std::vector<bool>>& flagged ,int numCol,int numRow,int numMine){
+void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState currentState, const sf::Font& font, const Field& field, const std::vector<std::vector<bool>>& opened, const std::vector<std::vector<bool>>& flagged ,int numCol,int numRow,int numMine,int uiOffset){
     sf::Sprite sprite;
     sf::RectangleShape tile(sf::Vector2f(static_cast<float>(tileSize - 2), static_cast<float>(tileSize - 2))); // float キャストを追加
 
@@ -48,8 +48,8 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
 
                 if(currentState == GameState::GameOver){
                     if(field.Mined(i, j)){
-                        sprite.setTexture(textures["boom"]);
-                        sprite.setScale(static_cast<float>(tileSize) / textures["boom"].getSize().x,static_cast<float>(tileSize) / textures["boom"].getSize().y);
+                        sprite.setTexture(textures["mine"]);
+                        sprite.setScale(static_cast<float>(tileSize) / textures["mine"].getSize().x,static_cast<float>(tileSize) / textures["mine"].getSize().y);
                         sprite.setPosition(static_cast<float>(j * tileSize), static_cast<float>(i * tileSize + uiOffset));
                         window.draw(sprite);
                     }else if(opened[i][j] && field.Count(i,j) > 0){
@@ -57,8 +57,6 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                         text.setFont(font);
                         text.setString(std::to_string(field.Count(i, j)));
                         text.setCharacterSize(24);
-                        text.setOutlineThickness(10);
-                        text.setOutlineColor(sf::Color::Black);
                         // 数字の色
                         if(field.Count(i, j) == 1){
                             text.setFillColor(sf::Color::Blue);
@@ -95,8 +93,6 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                             text.setFont(font);
                             text.setString(std::to_string(count));
                             text.setCharacterSize(24);
-                            text.setOutlineThickness(4);
-                            text.setOutlineColor(sf::Color::White);
                             if (field.Count(i, j) == 1){
                                 text.setFillColor(sf::Color::Blue);
                             }
@@ -130,8 +126,6 @@ void GameRenderer::display(sf::RenderWindow& window, int tileSize, GameState cur
                             text.setFont(font);
                             text.setString(std::to_string(count));
                             text.setCharacterSize(24);
-                            text.setOutlineThickness(4);
-                            text.setOutlineColor(sf::Color::White);
                             if(field.Count(i, j) == 1){
                                 text.setFillColor(sf::Color::Blue);
                             }
