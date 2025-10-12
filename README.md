@@ -21,12 +21,7 @@ C++と SFML を用いて作成した 2D マインスイーパー風ゲームで�
 ## ビルド方法（MSYS2 UCRT64 環境で実行）
 
 ```bash
-<<<<<<< HEAD
-g++ src/main.cpp src/Game.cpp src/Field.cpp src/GameUI.cpp src/GameRenderer.cpp src/SoundManager.cpp -o MyMinesweeper -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-=======
-$ g++ src/main.cpp src/Game.cpp src/Field.cpp src/GameUI.cpp src/GameRenderer.cpp src/SoundManager.cpp -o MyMinesweeper -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-
->>>>>>> 5e26d58a6f2db4286d41943a1673e86009ae03ab
+g++ src/main.cpp src/Game.cpp src/Field.cpp src/GameUI.cpp src/GameRenderer.cpp src/SoundManager.cpp src/Solver.cpp -o MyMinesweeper -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 実行方法
 bash
 ./MyMinesweeper.exe

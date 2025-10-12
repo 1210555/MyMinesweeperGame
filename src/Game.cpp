@@ -92,6 +92,41 @@ void Game::gameLevel(LevelState choosenLevel){
     field=Field(numCol,numRow,numMine);
     gameUI.updateLayout(window.getSize().x,window.getSize().y);
 }
+// レベル、クリックしたx座標、クリックしたy座標を引数とする
+void Game::initializeWithoutLuck(LevelState level,int clickedX,int clickedY){
+
+    //gameLevel(level);
+    Field finalBoard; // 完成した盤面を保存する変数
+
+// 完璧な盤面ができるまで無限にループ
+//盤面生成 → 盤面複製 → 複製したものを詰まずに解けるか検証
+    while(true){
+
+//1.新しい盤面を生成
+        Field candidateBoard(numCol, numRow, numMine);
+        candidateBoard.generateMinesSafe(clickedX,clickedY); //クリックした周囲の地雷数０の盤面生成
+
+//2.検証用に盤面をコピー
+//周囲の地雷数０の盤面をコピーし、コピーしたほうのboardForSolverをフラッグ立てたりして詰まずに解けるか検証(candidateBoardは変更加えない)
+        Field boardForSolver = candidateBoard;
+        //  初手の自動開放しSolverの検証のきっかけを与える
+        boardForSolver.autoRelease(clickedX, clickedY);
+//3.ソルバーで検証
+        Solver solver(boardForSolver);
+        if (solver.isSolvable()){
+            //スコープの関係でfinalBoardに保存
+                finalBoard = candidateBoard; // 成功！盤面を保存
+                break; // ループを抜ける
+        }
+    }
+
+//4.fieldメンバー変数を、完成した盤面に置き換える
+    this->field = finalBoard;
+    firstClick=false;
+//5.ゲームを開始する
+    this->state = GameState::Playing;
+    gameUI.startGameTimer();
+}
 
 void Game::Run(){
     int tileSize=50; //タイルサイズ(ゲーム全体で共通の定数)
@@ -148,7 +183,8 @@ void Game::Run(){
                     }else{
                         if (x >= 0 && x < numRow && y >= 0 && y < numCol){
                             if(firstClick){
-                                field.minePlace(y,x);
+                                initializeWithoutLuck(level,y,x);//ここで詰まない、周囲の地雷数０の盤面生成
+                                //field.generateMinesSafe(y,x);
                                 firstClick=false;
                             }
                             if(field.Flagged(y, x)){

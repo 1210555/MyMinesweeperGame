@@ -4,8 +4,9 @@
 #include "Constants.hpp" 
 #include "Field.hpp"
 #include "GameRenderer.hpp"
-#include "GameUI.hpp"
+//#include "GameUI.hpp"
 #include "SoundManager.hpp"
+#include "Solver.hpp"
 
 class Game{
 private:
@@ -20,7 +21,7 @@ private:
     GameRenderer gameRenderer;
     GameUI gameUI;
     SoundManager m_soundManager;
-
+    
     int openNumber;//開かれた安全なマスの数
     int initialOpenNumber;//OpenNumber の初期値 (0)
     int initialTotalPlace;//ボード全体のマス数
@@ -33,6 +34,7 @@ public:
     void Run();
     void resetGame();
     void gameLevel(LevelState level);
+    void initializeWithoutLuck(LevelState level,int clickedX,int clickedY);
     int numCol;
     int numRow;
     int numMine;

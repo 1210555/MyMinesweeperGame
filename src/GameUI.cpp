@@ -71,7 +71,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 //秒数テキスト
     timeDisplayText.setPosition(centerX,uiOffset/1.5f);
 
-    visualGuidance_glayLine.setPosition(centerX+15.0f,centerY);
+    visualGuidance_glayLine.setPosition(centerX+20.0f,centerY);
 
     visualGuidance_blackLine.setPosition(centerX+600.0f,centerY);
 
