@@ -30,6 +30,9 @@ class GameUI{
         sf::ConvexShape hardButtonShape;//
         sf::Text hardButtonText;//
         sf::RectangleShape timeDisplayShape;//経過時間表示の枠
+        sf::Text hintButtonText;
+        sf::RectangleShape hintButtonShape;
+        sf::RectangleShape m_hintHighlight; //ヒント時、安全なマスハイライト用の四角形
         sf::Text timeBoxText;//Timeって文字表示
         sf::Text timeDisplayText;//経過時間の表示
         sf::Clock gameClock;//タイマー使用時
@@ -65,6 +68,7 @@ class GameUI{
         bool m_isEasyButtonHovered = false;
         bool m_isNormalButtonHovered = false;
         bool m_isHardButtonHovered = false;
+        bool m_isShowingHint = false;   //ハイライトを表示中かどうか
 
     public:
         GameUI(int windowWidth, int windowHeight, int offset);
@@ -87,6 +91,9 @@ class GameUI{
     bool isEasyButtonClicked(const sf::Vector2i& mousePos) const;
     bool isNormalButtonClicked(const sf::Vector2i& mousePos) const;
     bool isHardButtonClicked(const sf::Vector2i& mousePos) const;
+    bool isHintButtonCliced(const sf::Vector2i& mousePos)const;
+    void showHint(sf::Vector2i pos);
+    void deleteHint();
 };
 
 #endif

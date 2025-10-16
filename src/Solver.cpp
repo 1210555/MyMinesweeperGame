@@ -19,85 +19,88 @@ Solver::Solver(Field& field) : m_field(field) {
     // コンストラクタの初期化子リストで、受け取ったfieldをm_fieldに設定
 }
 
-bool Solver::isSolvable() {
+bool Solver::isSolvable(){
     std::cout << "Starting solver..." << std::endl;
-    while (true) {
-        // 基本的な手筋を順番に試す
-        int revealed = revealKnownSafeCells();
-        int flagged = flagKnownMineCells();
+    while(true){
+        int revealed = revealKnownSafeCells();//解放したマスの数
+        int flagged = flagKnownMineCells();//設置したフラッグの数
 
         std::cout << "Solver step: revealed " << revealed << ", flagged " << flagged << std::endl;
 
-        // もし、このステップで何も進展がなかったら...
-        if (revealed == 0 && flagged == 0) {
-            break; // 手詰まりなのでループを抜ける
+        //解放したマスの数が０かつ設置したフラッグの数が０のとき手詰まり！
+        //つまり"詰んでいる状態！"なので盤面生成しなおすためにbreak
+        if(revealed==0 && flagged==0){
+            break;
         }
     }
 
-    // ループが終わった後、全ての安全なマスが開かれているかチェック
-    // (この isAllSafeCellsOpened() はFieldクラスに新しく作る必要がある)
-    if (m_field.isAllSafeCellsOpened()) {
+    //探索の手が止まったときすべての安全なマスが解放されているか
+    if(m_field.isAllSafeCellsOpened()){
         std::cout << "Solver determined: Solvable!" << std::endl;
         return true;
-    } else {
+    }else{
         std::cout << "Solver determined: Unsolvable (stuck)." << std::endl;
         return false;
     }
 }
 
-//
+//ソルバー用盤面で未開放のマスを開ける
 int Solver::revealKnownSafeCells() {
-    int revealedCount = 0;
+    int totalRevealedCount = 0;
 
     for(int row=0;row<m_field.getNumRow();row++){
         for(int col=0;col<m_field.getNumCol();col++){
-            if(m_field.Opened(row,col) && m_field.Count(row,col) > 0){
+            if(m_field.Opened(row,col) && m_field.getCount(row,col) > 0){
 
-                if(m_field.Count(row,col) == m_field.flagCount(row,col)){
-                    for(int i=-1; i<=1; i++){
-                        for(int j=-1; j<=1; j++){
-                            //そのマス自身は考慮しない
-                            if(i ==0 && j == 0) continue;
-
-                            int aroundX=row+i;
-                            int aroundY=col+j;
-                            
-                        //有効な盤面かどうかを判断
-                            if (aroundX<0 || aroundX>=m_field.getNumRow() || aroundY<0 || aroundY>=m_field.getNumCol()) continue;
-                            if(!m_field.Opened(aroundX,aroundY) && !m_field.Flagged(aroundX,aroundY)){
-                                //m_field.autoRelease(aroundX,aroundY);
-                                revealedCount+=m_field.autoRelease(aroundX,aroundY);
-                            }
-                        }
-                    }
+                if(m_field.getCount(row,col) == m_field.flagCount(row,col)){
+                    totalRevealedCount+=m_field.openAroundSafeCells(row,col);
                 }
             }
         }
     }
-    return revealedCount;
+    return totalRevealedCount;
 }
 
-//地雷と確定したマスにフラッグを立てる関数
-//検証したいマスの座標x,yを引数とする
+//ソルバー用盤面で地雷と確定したマスにフラッグを立てる関数
 int Solver::flagKnownMineCells(){
-    int flaggedCount = 0;
+    int totalFlaggedCount=0;
 
     //このループで座標(row,col)のマスの周辺のマスを調べる
     for(int row=0;row<m_field.getNumRow();row++){
         for(int col=0;col<m_field.getNumCol();col++){
-            if(m_field.Opened(row,col) && m_field.Count(row,col) > 0){
+
+        //解放済みかつ周囲の地雷数が0より大きいときフラッグを立てる
+            if(m_field.Opened(row,col) && m_field.getCount(row,col) > 0){
                 int unopenedCount=m_field.countUnopened(row,col);
-                if(m_field.Count(row,col)==unopenedCount){
+
+            //周囲の地雷数＝周囲の未開放マスとなったとき
+                if(m_field.getCount(row,col) == unopenedCount){
+                    totalFlaggedCount+=m_field.flagsAroundCells(row,col);
+                }
+            }
+        }
+    }
+    return totalFlaggedCount;
+}
+
+Hint Solver::findNextSafeCell(){
+    for(int row=0;row<m_field.getNumRow();row++){
+        for(int col=0;col<m_field.getNumCol();col++){
+            if(m_field.Opened(row,col) && m_field.getCount(row,col)>0){
+                if(m_field.getCount(row,col) == m_field.flagCount(row,col)){
+                    // 周囲8マスを調べる
                     for(int i=-1; i<=1; i++){
                         for(int j=-1; j<=1; j++){
+                            if (i==0 && j==0) continue;
                             int aroundX=row+i;
                             int aroundY=col+j;
-                            if(i ==0 && j == 0) continue;
-                        //有効な盤面かどうかを判断
-                            if (aroundX<0 || aroundX>=m_field.getNumRow() || aroundY<0 || aroundY>=m_field.getNumCol()) continue;
-                            if(!m_field.Opened(aroundX,aroundY) && !m_field.Flagged(aroundX,aroundY)){
-                                m_field.Flag(aroundX,aroundY);
-                                flaggedCount++;
+
+                            if(aroundX<0 || aroundX>=m_field.getNumRow() || aroundY<0 || aroundY>=m_field.getNumCol()) continue;
+                            //解放済みもしくはフラッグが立っているマスはcontinue
+                            //if(m_field.Opened(aroundX, aroundY) || m_field.Flagged(aroundX, aroundY)) continue;
+                            if (!m_field.Opened(aroundX, aroundY) && !m_field.Flagged(aroundX, aroundY)) {
+                                // 1つ見つけたら、その座標を返して関数を即終了！
+                                return{ Hint::Safe,{aroundX,aroundY}};
                             }
                         }
                     }
@@ -105,5 +108,10 @@ int Solver::flagKnownMineCells(){
             }
         }
     }
-    return flaggedCount;
+    return {Hint::None,{}};
+}
+
+Hint Solver::findHint() {
+    
+    return findNextSafeCell();
 }

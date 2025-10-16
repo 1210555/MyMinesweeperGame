@@ -139,12 +139,6 @@ void Game::Run(){
             if (event.type == sf::Event::Closed){
                 window.close();
             }
-
-            // マウスのクリック座標の取得とUI部分の調整
-            /*sf::Vector2i mousePos=sf::Mouse::getPosition(window);
-            int x=mousePos.x/tileSize;
-            int y=(mousePos.y-UI_AREA_HEIGHT)/tileSize;*/
-
            // 左クリックの処理
             if(event.type==sf::Event::MouseButtonPressed && event.mouseButton.button==sf::Mouse::Left){
                 if(state==GameState::MainMenu){
@@ -180,11 +174,23 @@ void Game::Run(){
                             state=GameState::PauseMenu;
                             gameUI.pauseTimer();
                         }
+                        if(gameUI.isHintButtonCliced(mousePos)){
+                            Field boardCopy = this->field;//Solverクラスのコンストラクタに渡す用の盤面のコピー（書き変わる可能性があるためコピー）
+                            Solver solver(boardCopy);//コピーをコンストラクタに渡す！
+
+                            Hint hint=solver.findHint();
+                            if(hint.type==Hint::Safe){
+                                std::cout << "hint : (" << hint.pos.x << ", " << hint.pos.y << ") is Safe" << std::endl;
+                                gameUI.showHint(hint.pos);
+                            }else{
+                                std::cout << "hint is not found" << std::endl;
+                            }
+                        }
+                    //クリック箇所がUIエリアでない時
                     }else{
                         if (x >= 0 && x < numRow && y >= 0 && y < numCol){
                             if(firstClick){
                                 initializeWithoutLuck(level,y,x);//ここで詰まない、周囲の地雷数０の盤面生成
-                                //field.generateMinesSafe(y,x);
                                 firstClick=false;
                             }
                             if(field.Flagged(y, x)){
@@ -197,6 +203,7 @@ void Game::Run(){
                             }else{
                                 int releaseCount=field.autoRelease(y,x);
                                 openNumber+=releaseCount;
+                                gameUI.deleteHint();//ヒントを出していたらハイライトが消える
                                 if(releaseCount==1){
                                     m_soundManager.playSound("click1");//1マス開放時のサウンド
                                 }else{

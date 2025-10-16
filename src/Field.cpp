@@ -16,6 +16,44 @@ Field::Field(int numRow,int numCol,int numMine)//難易度に応じたフィー�
     fieldOfNumMine(numMine)
     {}
 
+void Field::aroundCellCheck(int row,int col,std::function<void(int ,int)> func)const{
+    for(int i=-1; i<=1;i++){
+        for(int j=-1; j<=1; j++){
+            if(i ==0 && j == 0) continue;
+            int aroundX=row+i;
+            int aroundY=col+j;
+        //有効なマスか
+            if (aroundX<0 || aroundX>=fieldOfNumRow || aroundY<0 || aroundY>=fieldOfNumCol) continue;
+            func(aroundX,aroundY);
+        }
+    }
+}
+
+int Field::openAroundSafeCells(int x,int y){
+    int revealedCount=0;
+
+    aroundCellCheck(x,y,[&](int nx,int ny){
+        if(!Opened(nx,ny) && !Flagged(nx,ny)){
+            revealedCount+=autoRelease(nx,ny);
+        }
+    });
+    return revealedCount;
+}
+
+//未開放かつフラッグのないますにフラッグを立てる
+//立てたフラッグの数を返す
+int Field::flagsAroundCells(int x,int y){
+    int flaggedCount = 0;
+
+    aroundCellCheck(x,y,[&](int nx,int ny){
+        if (!Opened(nx,ny) && !Flagged(nx,ny)) {
+            Flag(nx,ny);
+            flaggedCount++;
+        }
+    });
+    return flaggedCount;
+}
+
 //クリックした座標を受け取りその周辺の地雷数が０になるまで盤面生成
 void Field::generateMinesSafe(int avoidRow,int avoidCol){
     int placed=0;//設置した地雷の数
@@ -83,7 +121,7 @@ int Field::getNumCol(){
 }
 
 //クリックした座標(x,y)
-int Field::Count(int x, int y)const{
+int Field::getCount(int x, int y)const{
     int AroundMineCount = 0;
     int dx[8]={-1,-1,-1,0,0,1,1,1};//地雷数チェックの行の値
     int dy[8]={-1,0,1,-1,1,-1,0,1};//地雷数チェックの列の値
@@ -173,7 +211,7 @@ int Field::autoRelease(int x,int y){
     if(Mined(x,y)){
         return 0;
     }
-    if(Count(x,y)!=0){
+    if(getCount(x,y)!=0){
         return OpenCount;
     }
 

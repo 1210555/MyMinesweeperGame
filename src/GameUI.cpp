@@ -43,7 +43,7 @@ void GameUI::updateLayout(int newWidth,int newHeight){
 
     finishButtonText.setPosition(centerX,centerY+100.0f);
 
-    menuButtonShape.setPosition(static_cast<float>(newWidth - 10 - menuButtonShape.getSize().x),static_cast<float>(uiOffset / 2.0f - menuButtonShape.getSize().y / 2.0f));
+    menuButtonShape.setPosition(static_cast<float>(newWidth-10-menuButtonShape.getSize().x),static_cast<float>(uiOffset / 2.0f - menuButtonShape.getSize().y / 2.0f));
 
     menuButtonText.setPosition(static_cast<float>(menuButtonShape.getPosition().x + menuButtonShape.getSize().x / 2.0f),static_cast<float>(menuButtonShape.getPosition().y + menuButtonShape.getSize().y / 2.0f));
 
@@ -60,6 +60,10 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     hardButtonShape.setPosition(centerX,centerY+centerY*2/3);
 
     hardButtonText.setPosition(centerX,centerY+centerY*2/3-60.0f);
+    //ヒントボタンとテキストの位置
+    //1つ目のー１０は画面端とボックスとの余白,2つ目はメニューボックスとヒントボックスとの距離
+    hintButtonShape.setPosition(static_cast<float>(newWidth-10-hintButtonShape.getSize().x-menuButtonShape.getSize().x-10),static_cast<float>(uiOffset / 2.0f - hintButtonShape.getSize().y / 2.0f));
+    hintButtonText.setPosition(static_cast<float>(hintButtonShape.getPosition().x + hintButtonShape.getSize().x / 2.0f),static_cast<float>(hintButtonShape.getPosition().y + hintButtonShape.getSize().y / 2.0f));
     
     winText.setPosition(centerX,centerY);//
 
@@ -144,6 +148,8 @@ void GameUI::setMainFont(const sf::Font& loadedMainFont){
     easyButtonText.setFont(loadedMainFont);
     normalButtonText.setFont(loadedMainFont);
     hardButtonText.setFont(loadedMainFont);
+    //ヒントボタンのテキスト
+    hintButtonText.setFont(loadedMainFont);
     // リスタートボタン
     goTitleButtonText.setFont(loadedMainFont);
     //ゲーム中のポーズボタンテキスト
@@ -317,6 +323,23 @@ void GameUI::initializeStyles(){
     sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
     timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
 
+    hintButtonShape.setSize(sf::Vector2f(50.0f, 30.0f));//横50、縦30
+    hintButtonShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、グレー
+    hintButtonShape.setOutlineThickness(2);
+    hintButtonShape.setOutlineColor(sf::Color::White);
+
+    hintButtonText.setCharacterSize(20);
+    hintButtonText.setFillColor(sf::Color::White);
+    hintButtonText.setString("Hint");
+    sf::FloatRect hintButtonRect = hintButtonText.getLocalBounds();
+    hintButtonText.setOrigin(hintButtonRect.width / 2.0f, hintButtonRect.top + hintButtonRect.height / 2.0f);
+
+    m_hintHighlight.setSize(sf::Vector2f(50.0f,50.0f));//1マスの大きさ
+    m_hintHighlight.setFillColor(sf::Color(10, 100, 200, 200)); //ボックス内の色,デフォルトの色
+    m_hintHighlight.setOutlineThickness(2);
+    m_hintHighlight.setOutlineColor(sf::Color::Blue);
+
+
     visualGuidance_glayLine.setSize(sf::Vector2f(20.0f,2000.0f));
     visualGuidance_glayLine.setFillColor(sf::Color(100,100,100,200));
     visualGuidance_glayLine.setOrigin(visualGuidance_glayLine.getSize().x/2.0f,visualGuidance_glayLine.getSize().y/2.0f);
@@ -427,6 +450,17 @@ void GameUI::initializeStyles(){
     }
 }
 
+void GameUI::showHint(sf::Vector2i pos){
+    m_isShowingHint = true;
+    float safeCellX=pos.y*50;
+    float safeCellY=pos.x*50;
+    m_hintHighlight.setPosition(safeCellX, safeCellY+uiOffset);
+}
+
+void GameUI::deleteHint(){
+    m_isShowingHint=false;
+}
+
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
     if(currentState==GameState::Playing){
         window.draw(menuButtonShape);
@@ -434,6 +468,13 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         window.draw(timeDisplayShape);
         window.draw(timeBoxText);
         window.draw(timeDisplayText);
+        window.draw(hintButtonShape);
+        window.draw(hintButtonText);
+        //ヒントボタン押したとき
+        if(m_isShowingHint){
+            window.draw(m_hintHighlight);
+        }
+
     }else if(currentState==GameState::PauseMenu){
         window.clear(sf::Color(100,100,100,200));
         window.draw(pauseMenuText);
@@ -482,7 +523,6 @@ void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
         window.draw(titleText);
         window.draw(m_reverseColorTitleText,states);
         
-
     //Easyのボタンテキスト
         window.draw(easyButtonShape);
         window.draw(m_reverseColorEasyButtonShape,shapeStates);
@@ -604,7 +644,7 @@ void GameUI::updateHoverState(const sf::Vector2i& mousePos,GameState currentStat
 void GameUI::createBackgroundGrid(unsigned int windowWodth,unsigned int windowHeight,int spacing){
     m_backgroundGrid.setPrimitiveType(sf::Lines);
     m_backgroundGrid.clear();
-std::cout<<"create"<<std::endl;
+    std::cout<<"create"<<std::endl;
     sf::Color gridColor(255,255,255,30);
 
     //垂直線
@@ -625,30 +665,34 @@ std::cout<<"create"<<std::endl;
 }
 
 // マウス位置がボタンの描画領域内にあるかを判定
-bool GameUI::isGoTitleButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isGoTitleButtonClicked(const sf::Vector2i& mousePos)const{
     return goTitleButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
-bool GameUI::isMenuButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isMenuButtonClicked(const sf::Vector2i& mousePos)const{
     return menuButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
-bool GameUI::isContinueButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isContinueButtonClicked(const sf::Vector2i& mousePos)const{
     return continueButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
-bool GameUI::isFinishButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isFinishButtonClicked(const sf::Vector2i& mousePos)const{
     return finishButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
-bool GameUI::isEasyButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isEasyButtonClicked(const sf::Vector2i& mousePos)const{
     return easyButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
-bool GameUI::isNormalButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isNormalButtonClicked(const sf::Vector2i& mousePos)const{
     return normalButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
-bool GameUI::isHardButtonClicked(const sf::Vector2i& mousePos) const {
+bool GameUI::isHardButtonClicked(const sf::Vector2i& mousePos)const{
     return hardButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+}
+
+bool GameUI::isHintButtonCliced(const sf::Vector2i& mousePos)const{
+    return hintButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
