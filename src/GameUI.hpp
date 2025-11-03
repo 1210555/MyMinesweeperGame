@@ -5,24 +5,18 @@
 
 class GameUI{
     private:
-    
-        sf::Text leftInstructionText;//操作方法左クリックでマス開放
-        sf::Text rightInstructionText;//操作方法右クリックでフラッグ設置
         sf::Text gameOverText;//ゲームオーバーテキストの表示
         sf::RectangleShape endGamePanelShape;//winテキストをいれるボックス
         sf::Text winText;//勝利時のテキスト
         sf::Text titleText;//タイトルのテキスト
         sf::Text pauseMenuText;//ポーズメニューのテキスト
-        sf::RectangleShape pauseMenuPanelShape;//ポーズメニューのボックス
         sf::RectangleShape goTitleButtonShape;//タイトルに戻るボタンの形
         sf::Text goTitleButtonText;//タイトルに戻るボタンのテキスト
-        sf::RectangleShape menuButtonShape;//メニューボタンの形
-        sf::Text menuButtonText;//メニューボタンのテキスト
+        sf::CircleShape menuButtonShape;//メニューボタンの形
         sf::RectangleShape continueButtonShape;//
         sf::Text continueButtonText;//
         sf::RectangleShape finishButtonShape;//
         sf::Text finishButtonText;//
-        //sf::ConvexShape easyButtonShape;
         sf::ConvexShape easyButtonShape;//
         sf::Text easyButtonText;//
         sf::ConvexShape normalButtonShape;//
@@ -30,7 +24,6 @@ class GameUI{
         sf::ConvexShape hardButtonShape;//
         sf::Text hardButtonText;//
         sf::RectangleShape timeDisplayShape;//経過時間表示の枠
-        sf::Text hintButtonText;
         sf::RectangleShape hintButtonShape;
         sf::RectangleShape m_hintHighlight; //ヒント時、安全なマスハイライト用の四角形
         sf::Text timeBoxText;//Timeって文字表示
@@ -55,6 +48,14 @@ class GameUI{
         sf::Vector2f m_initialNormalButtonPos;
         sf::Vector2f m_initialHardButtonPos;
         sf::VertexArray m_backgroundGrid;
+
+        //メニューボタンのアイコン
+        sf::Texture m_menuButtonTexture;
+        sf::Sprite m_menuButtonIcon;
+
+        //ヒントボタンのアイコン
+        sf::Texture m_hintButtonTexture;
+        sf::Sprite m_hintButtonIcon;
 
         mutable sf::Shader m_clipperShader;//シェーダーオブジェクト
         mutable sf::Shader m_shapeClipperShader;

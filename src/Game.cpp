@@ -49,12 +49,7 @@ Game::Game()
     m_soundManager.loadSound("autoRelease1", "assets/sounds/autoRelease1.wav");
     m_soundManager.loadSound("autoRelease2", "assets/sounds/autoRelease2.wav");
     m_soundManager.loadSound("chancelFlag", "assets/sounds/chancelFlag.wav");
-     /*if (!buffer.loadFromFile(filename)) {
-        // エラーメッセージをコンソールに出力
-        std::cerr << "Error loading sound file: " << filename << std::endl;
-        // このサウンドは読み込めなかったので、処理を中断する
-        return; 
-    }*/
+
 
     // ロードしたフォントを GameUI に設定
     gameUI.setMainFont(myFont);
@@ -92,13 +87,13 @@ void Game::gameLevel(LevelState choosenLevel){
     field=Field(numCol,numRow,numMine);
     gameUI.updateLayout(window.getSize().x,window.getSize().y);
 }
+
 // レベル、クリックしたx座標、クリックしたy座標を引数とする
 void Game::initializeWithoutLuck(LevelState level,int clickedX,int clickedY){
 
-    //gameLevel(level);
     Field finalBoard; // 完成した盤面を保存する変数
 
-// 完璧な盤面ができるまで無限にループ
+//完璧な盤面ができるまでのループ
 //盤面生成 → 盤面複製 → 複製したものを詰まずに解けるか検証
     while(true){
 
@@ -109,14 +104,14 @@ void Game::initializeWithoutLuck(LevelState level,int clickedX,int clickedY){
 //2.検証用に盤面をコピー
 //周囲の地雷数０の盤面をコピーし、コピーしたほうのboardForSolverをフラッグ立てたりして詰まずに解けるか検証(candidateBoardは変更加えない)
         Field boardForSolver = candidateBoard;
-        //  初手の自動開放しSolverの検証のきっかけを与える
+        //初手の自動開放しSolverの検証のきっかけを与える
         boardForSolver.autoRelease(clickedX, clickedY);
 //3.ソルバーで検証
         Solver solver(boardForSolver);
         if (solver.isSolvable()){
             //スコープの関係でfinalBoardに保存
-                finalBoard = candidateBoard; // 成功！盤面を保存
-                break; // ループを抜ける
+                finalBoard = candidateBoard; //成功！盤面を保存
+                break; //ループを抜ける
         }
     }
 
@@ -193,11 +188,10 @@ void Game::Run(){
                                 initializeWithoutLuck(level,y,x);//ここで詰まない、周囲の地雷数０の盤面生成
                                 firstClick=false;
                             }
-                            if(field.Flagged(y, x)){
-                                continue;
-                            }else if(field.Opened(y, x)){
-                                continue;
-                            }else if(field.Mined(y, x)){
+                        //フラッグ、解放済みのマスなら何も起きない
+                            if(field.Flagged(y, x)) continue;
+                            if(field.Opened(y, x)) continue;
+                            if(field.Mined(y, x)){
                                 m_soundManager.playSound("boom");//爆発時のサウンド
                                 state = GameState::GameOver;
                             }else{
@@ -206,7 +200,8 @@ void Game::Run(){
                                 gameUI.deleteHint();//ヒントを出していたらハイライトが消える
                                 if(releaseCount==1){
                                     m_soundManager.playSound("click1");//1マス開放時のサウンド
-                                }else{
+                                } 
+                                else{
                                     m_soundManager.playSound("autoRelease1");//連鎖的な開放時のサウンド
                                 }
                                 
@@ -223,17 +218,17 @@ void Game::Run(){
                         gameUI.continueGameTimer();
                         state=GameState::Playing;
                     }else if(gameUI.isFinishButtonClicked(mousePos)){
-                        window.create(sf::VideoMode(32 * 50, 16 * 50 + UI_AREA_HEIGHT), "MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
-                        gameUI.updateLayout(32 * 50, 16 * 50 + UI_AREA_HEIGHT);
+                        window.create(sf::VideoMode(32*50,16*50+UI_AREA_HEIGHT),"MineSweeper",sf::Style::Titlebar | sf::Style::Close);//mainmenuは常に1600×870
+                        gameUI.updateLayout(32*50, 16*50+UI_AREA_HEIGHT);
                         state=GameState::MainMenu;
                         level=LevelState::BeforeChoosing;
+                        gameUI.deleteHint();
                     }
-                    //プレイ中のロジック
                 }
             }
             // 右クリック
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
-                if (state == GameState::Playing) {
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right){
+                if (state == GameState::Playing){
                     if (x >= 0 && x < numRow && y >= 0 && y < numCol) {
                         if (!field.Opened(y, x)) {
                             m_soundManager.playSound("flag");//フラグ設置時のサウンド

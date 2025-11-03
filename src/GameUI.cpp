@@ -15,70 +15,31 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     centerX=newWidth/2.0f;//状態に応じて変更した横幅の中間
     centerY=newHeight/2.0f;//状態に応じて変更した縦の長さの中間
 
-//この部分はMainTitle時に移すようにしておく。(Playing時にずっと出さなくてもいい気がする)    
-    /*leftInstructionText.setString("Left Click: Open Tile");
-    leftInstructionText.setCharacterSize(20);
-    leftInstructionText.setFillColor(sf::Color::White);
-    leftInstructionText.setPosition(10.0f, 10.0f);
-
-    rightInstructionText.setString("Right Click: Flag Tile");
-    rightInstructionText.setCharacterSize(20);
-    rightInstructionText.setFillColor(sf::Color::White);
-    rightInstructionText.setPosition(10.0f, 40.0f);*/
     endGamePanelShape.setPosition(centerX,centerY+uiOffset/2.0f);
 
-    goTitleButtonShape.setPosition(centerX,centerY+50.0f);
-
-    goTitleButtonText.setPosition(centerX,centerY+50.0f);
-    //
-    pauseMenuPanelShape.setPosition(centerX,centerY);
-//ポーズメニューテキスト
+//state=Menuのメニュー画面でのUI
     pauseMenuText.setPosition(centerX,uiOffset/2.0f);
-
     continueButtonShape.setPosition(centerX,centerY);
-
     continueButtonText.setPosition(centerX,centerY);
-    
     finishButtonShape.setPosition(centerX,centerY+100.0f);
-
     finishButtonText.setPosition(centerX,centerY+100.0f);
-
-    menuButtonShape.setPosition(static_cast<float>(newWidth-10-menuButtonShape.getSize().x),static_cast<float>(uiOffset / 2.0f - menuButtonShape.getSize().y / 2.0f));
-
-    menuButtonText.setPosition(static_cast<float>(menuButtonShape.getPosition().x + menuButtonShape.getSize().x / 2.0f),static_cast<float>(menuButtonShape.getPosition().y + menuButtonShape.getSize().y / 2.0f));
-
-    titleText.setPosition(centerX,uiOffset);//UI部分中央に表示
-
-    easyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);
-
-    easyButtonText.setPosition(centerX,centerY-45.0f);
-
-    normalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
-
-    normalButtonText.setPosition(centerX,centerY+centerY/3-55.0f);
-
-    hardButtonShape.setPosition(centerX,centerY+centerY*2/3);
-
-    hardButtonText.setPosition(centerX,centerY+centerY*2/3-60.0f);
-    //ヒントボタンとテキストの位置
-    //1つ目のー１０は画面端とボックスとの余白,2つ目はメニューボックスとヒントボックスとの距離
-    hintButtonShape.setPosition(static_cast<float>(newWidth-10-hintButtonShape.getSize().x-menuButtonShape.getSize().x-10),static_cast<float>(uiOffset / 2.0f - hintButtonShape.getSize().y / 2.0f));
-    hintButtonText.setPosition(static_cast<float>(hintButtonShape.getPosition().x + hintButtonShape.getSize().x / 2.0f),static_cast<float>(hintButtonShape.getPosition().y + hintButtonShape.getSize().y / 2.0f));
     
-    winText.setPosition(centerX,centerY);//
-
-    gameOverText.setPosition(centerX, centerY);//UI部分中央に表示
-//時間表示ボックス
-    timeDisplayShape.setPosition(centerX,uiOffset/2.0f);
-//Timeってテキスト
-    timeBoxText.setPosition(centerX,uiOffset/3.0f);
-//秒数テキスト
-    timeDisplayText.setPosition(centerX,uiOffset/1.5f);
-
+//state=MeinMenuのUI
+    float radius=menuButtonShape.getRadius();//円の半径を取得
+    float posX=newWidth-10.0f-radius;//X座標を計算(画面右端-マージン-半径)
+    float posY=uiOffset/2.0f;//Y座標を計算
+    //↑はメニューアイコンが丸いため、座標を計算
+    menuButtonShape.setPosition(posX,posY);//計算した座標をセット
+    m_menuButtonIcon.setPosition(menuButtonShape.getPosition());//
+    titleText.setPosition(centerX,uiOffset);//タイトル
+    easyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);//
+    easyButtonText.setPosition(centerX,centerY-45.0f);
+    normalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
+    normalButtonText.setPosition(centerX,centerY+centerY/3-55.0f);
+    hardButtonShape.setPosition(centerX,centerY+centerY*2/3);
+    hardButtonText.setPosition(centerX,centerY+centerY*2/3-60.0f);
     visualGuidance_glayLine.setPosition(centerX+20.0f,centerY);
-
     visualGuidance_blackLine.setPosition(centerX+600.0f,centerY);
-
     m_reverseColorTitleText.setPosition(centerX,uiOffset);
     m_reverseColorEasyText.setPosition(centerX,centerY-45.0f);
     m_reverseColorNormalText.setPosition(centerX,centerY+centerY/3-55.0f);
@@ -86,16 +47,29 @@ void GameUI::updateLayout(int newWidth,int newHeight){
     m_reverseColorEasyButtonShape.setPosition(centerX,centerY-60.0f-50.0f);
     m_reverseColorNormalButtonShape.setPosition(centerX,centerY+centerY/3-50.0f-5.0f);
     m_reverseColorHardButtonShape.setPosition(centerX,centerY+centerY*2/3);
-
     m_overColorEasyShape.setPosition(centerX,centerY+20.0f);
     m_overColorNormalShape.setPosition(centerX,centerY+150.0f);//ボックスの縦100+ボックスのアウトライン20=120
     m_overColorHardShape.setPosition(centerX,centerY+270.0f);
-
-    m_initialEasyButtonPos = easyButtonShape.getPosition();
-    m_initialNormalButtonPos = normalButtonShape.getPosition();
-    m_initialHardButtonPos = hardButtonShape.getPosition();
-
+    m_initialEasyButtonPos=easyButtonShape.getPosition();
+    m_initialNormalButtonPos=normalButtonShape.getPosition();
+    m_initialHardButtonPos=hardButtonShape.getPosition();
     createBackgroundGrid(newWidth,newHeight,80);
+
+//state=PlayingのUI
+    hintButtonShape.setPosition(static_cast<float>(newWidth-10-hintButtonShape.getSize().x-hintButtonShape.getSize().x-10),static_cast<float>(uiOffset / 2.0f - hintButtonShape.getSize().y / 2.0f));//1つ目のー１０は画面端とボックスとのマージン,2つ目はメニューボックスとヒントボックスとのマージン
+    m_hintButtonIcon.setPosition(static_cast<float>(hintButtonShape.getPosition().x + hintButtonShape.getSize().x / 2.0f),static_cast<float>(hintButtonShape.getPosition().y + hintButtonShape.getSize().y / 2.0f));
+    timeDisplayShape.setPosition(centerX,uiOffset/2.0f);
+    timeBoxText.setPosition(centerX,uiOffset/3.0f);
+    timeDisplayText.setPosition(centerX,uiOffset/1.5f);
+
+//state=Win or GameOverのUI
+    goTitleButtonShape.setPosition(centerX,centerY+50.0f);
+    goTitleButtonText.setPosition(centerX,centerY+50.0f);
+//state=WinのUI
+    winText.setPosition(centerX,centerY);
+//state=GameOverのUI
+    gameOverText.setPosition(centerX, centerY);//UI部分中央に表示
+
 }
 //タイマー表示
 void GameUI::updateTimer(GameState currentState){
@@ -125,10 +99,6 @@ void GameUI::startGameTimer(){
 }
 
 void GameUI::setFont(const sf::Font& loadedFont){
-    // 左クリック説明
-    leftInstructionText.setFont(loadedFont);
-    // 右クリック説明
-    rightInstructionText.setFont(loadedFont);
     // ゲームオーバーメッセージの設定
     gameOverText.setFont(loadedFont);
     // 勝利メッセージの設定
@@ -137,8 +107,6 @@ void GameUI::setFont(const sf::Font& loadedFont){
     pauseMenuText.setFont(loadedFont);
     //Timeをテキスト表示
     timeBoxText.setFont(loadedFont);
-
-    
 }
 
 void GameUI::setMainFont(const sf::Font& loadedMainFont){
@@ -148,12 +116,8 @@ void GameUI::setMainFont(const sf::Font& loadedMainFont){
     easyButtonText.setFont(loadedMainFont);
     normalButtonText.setFont(loadedMainFont);
     hardButtonText.setFont(loadedMainFont);
-    //ヒントボタンのテキスト
-    hintButtonText.setFont(loadedMainFont);
     // リスタートボタン
     goTitleButtonText.setFont(loadedMainFont);
-    //ゲーム中のポーズボタンテキスト
-    menuButtonText.setFont(loadedMainFont);
     //ポーズ中にプレイに戻るボタン
     continueButtonText.setFont(loadedMainFont);
     //ポーズ中に終了するボタン
@@ -175,7 +139,7 @@ void GameUI::initializeStyles(){
     endGamePanelShape.setOutlineColor(sf::Color::White);
 
     goTitleButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
-    goTitleButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
+    goTitleButtonShape.setFillColor(sf::Color(100, 100, 250));
     goTitleButtonShape.setOrigin(goTitleButtonShape.getSize() / 2.0f);
     goTitleButtonShape.setOutlineThickness(2);
     goTitleButtonShape.setOutlineColor(sf::Color::White);
@@ -193,7 +157,7 @@ void GameUI::initializeStyles(){
     pauseMenuText.setOrigin(pauseRect.width / 2.0f, pauseRect.top + pauseRect.height / 2.0f);
 
     continueButtonShape.setSize(sf::Vector2f(300.0f, 60.0f));
-    continueButtonShape.setFillColor(sf::Color(200,0,0)); //赤
+    continueButtonShape.setFillColor(sf::Color(200,0,0));
     continueButtonShape.setOrigin(continueButtonShape.getSize() / 2.0f);
     continueButtonShape.setOutlineThickness(5);
     continueButtonShape.setOutlineColor(sf::Color::Black);
@@ -205,7 +169,7 @@ void GameUI::initializeStyles(){
     continueButtonText.setOrigin(continueRect.left + continueRect.width / 2.0f, continueRect.top + continueRect.height / 2.0f);
 
     finishButtonShape.setSize(sf::Vector2f(300.0f, 60.0f));
-    finishButtonShape.setFillColor(sf::Color(250,0,0)); //赤
+    finishButtonShape.setFillColor(sf::Color(250,0,0));
     finishButtonShape.setOrigin(finishButtonShape.getSize().x / 2.0f,finishButtonShape.getSize().y / 2.0f);
     finishButtonShape.setOutlineThickness(5);
     finishButtonShape.setOutlineColor(sf::Color::Black);
@@ -216,23 +180,19 @@ void GameUI::initializeStyles(){
     sf::FloatRect finishRect = finishButtonText.getLocalBounds();
     finishButtonText.setOrigin(finishRect.left + finishRect.width / 2.0f, finishRect.top + finishRect.height / 2.0f);
 
-    menuButtonShape.setSize(sf::Vector2f(100.0f, 30.0f));
-    menuButtonShape.setFillColor(sf::Color(100, 100, 250)); // 青っぽい
-    menuButtonShape.setOutlineThickness(2);
+    float buttonRadius=23.0f;
+    menuButtonShape.setRadius(buttonRadius);
+    menuButtonShape.setOrigin(buttonRadius, buttonRadius);
+    menuButtonShape.setFillColor(sf::Color(100, 100, 100));
     menuButtonShape.setOutlineColor(sf::Color::White);
-
-    menuButtonText.setString("Menu");
-    menuButtonText.setCharacterSize(18);
-    menuButtonText.setFillColor(sf::Color::White);
-    sf::FloatRect menuRect = menuButtonText.getLocalBounds();
-    menuButtonText.setOrigin(menuRect.left + menuRect.width / 2.0f, menuRect.top + menuRect.height / 2.0f);
+    menuButtonShape.setOutlineThickness(3.0f);
 
     easyButtonShape.setPointCount(4);
     easyButtonShape.setPoint(0,sf::Vector2f(0,0));
     easyButtonShape.setPoint(1,sf::Vector2f(400,30));
     easyButtonShape.setPoint(2,sf::Vector2f(420,110));
     easyButtonShape.setPoint(3,sf::Vector2f(10,100));
-    easyButtonShape.setFillColor(sf::Color::White); //グレー（数字が大きいほど白)
+    easyButtonShape.setFillColor(sf::Color::White);
     sf::FloatRect easyBounds=easyButtonShape.getLocalBounds();
     easyButtonShape.setOrigin(easyBounds.left+easyBounds.width/2.0f,easyBounds.top+easyBounds.height/2.0f-60.0f);
     easyButtonShape.setOutlineThickness(10);
@@ -242,7 +202,7 @@ void GameUI::initializeStyles(){
     easyButtonText.setOutlineColor(sf::Color::Green);
     easyButtonText.setOutlineThickness(6.0f);
     easyButtonText.setCharacterSize(48);
-    easyButtonText.setString("Easy"); // 静的なテキストもここで設定
+    easyButtonText.setString("Easy");
     sf::FloatRect easyRect = easyButtonText.getLocalBounds();
     easyButtonText.setOrigin(easyRect.width / 2.0f, easyRect.top + easyRect.height / 2.0f);
 
@@ -253,7 +213,7 @@ void GameUI::initializeStyles(){
     normalButtonShape.setPoint(2,sf::Vector2f(430,110));
     normalButtonShape.setPoint(3,sf::Vector2f(10,100));
     sf::FloatRect normalBounds=normalButtonShape.getLocalBounds();
-    normalButtonShape.setFillColor(sf::Color::White); //グレー
+    normalButtonShape.setFillColor(sf::Color::White);
     normalButtonShape.setOrigin(normalBounds.left+normalBounds.width/2.0f,normalBounds.top+normalBounds.height/2.0f);
     normalButtonShape.setOutlineThickness(10);
     normalButtonShape.setOutlineColor(sf::Color::Black);
@@ -272,7 +232,7 @@ void GameUI::initializeStyles(){
     hardButtonShape.setPoint(2,sf::Vector2f(430,110));
     hardButtonShape.setPoint(3,sf::Vector2f(10,100));
     sf::FloatRect hardBounds=hardButtonShape.getLocalBounds();
-    hardButtonShape.setFillColor(sf::Color::White); //グレー
+    hardButtonShape.setFillColor(sf::Color::White);
     hardButtonShape.setOrigin(hardBounds.left+hardBounds.width/2.0f,hardBounds.top+hardBounds.height/2.0f+60.0f);
     hardButtonShape.setOutlineThickness(10);
     hardButtonShape.setOutlineColor(sf::Color::Black);
@@ -306,7 +266,7 @@ void GameUI::initializeStyles(){
     gameOverText.setOrigin(goRect.width/2.0f,goRect.top+goRect.height/2.0f);
     
     timeDisplayShape.setSize(sf::Vector2f(200.0f, 100.0f));//横200、縦100
-    timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒            timeDisplayShape.setOrigin(timeDisplayShape.getSize().x / 2.0f,timeDisplayShape.getSize().y / 2.0f);
+    timeDisplayShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、黒
     timeDisplayShape.setOutlineThickness(2);
     timeDisplayShape.setOrigin(timeDisplayShape.getSize() / 2.0f);
     timeDisplayShape.setOutlineColor(sf::Color::White);
@@ -323,21 +283,16 @@ void GameUI::initializeStyles(){
     sf::FloatRect timeDisplayRect = timeDisplayText.getLocalBounds();
     timeDisplayText.setOrigin(timeDisplayRect.width / 2.0f, timeDisplayRect.top + timeDisplayRect.height / 2.0f);
 
-    hintButtonShape.setSize(sf::Vector2f(50.0f, 30.0f));//横50、縦30
-    hintButtonShape.setFillColor(sf::Color(100, 100, 100)); //ボックス内の色、グレー
+    hintButtonShape.setSize(sf::Vector2f(50.0f, 50.0f));//横50、縦30
+    hintButtonShape.setFillColor(sf::Color(255, 255, 255, 200)); //ボックス内の色、グレー
     hintButtonShape.setOutlineThickness(2);
     hintButtonShape.setOutlineColor(sf::Color::White);
-
-    hintButtonText.setCharacterSize(20);
-    hintButtonText.setFillColor(sf::Color::White);
-    hintButtonText.setString("Hint");
-    sf::FloatRect hintButtonRect = hintButtonText.getLocalBounds();
-    hintButtonText.setOrigin(hintButtonRect.width / 2.0f, hintButtonRect.top + hintButtonRect.height / 2.0f);
 
     m_hintHighlight.setSize(sf::Vector2f(50.0f,50.0f));//1マスの大きさ
     m_hintHighlight.setFillColor(sf::Color(10, 100, 200, 200)); //ボックス内の色,デフォルトの色
     m_hintHighlight.setOutlineThickness(2);
     m_hintHighlight.setOutlineColor(sf::Color::Blue);
+
 
 
     visualGuidance_glayLine.setSize(sf::Vector2f(20.0f,2000.0f));
@@ -442,12 +397,30 @@ void GameUI::initializeStyles(){
     m_overColorHardShape.setFillColor(sf::Color(200,200,200,100));
     m_overColorHardShape.setOrigin(overColorHardBounds.left+overColorHardBounds.width/2.0f,overColorHardBounds.top+overColorHardBounds.height/2.0f+60.0f);
 
+    
+
     if(!m_clipperShader.loadFromFile("assets/shaders/clipper.frag",sf::Shader::Fragment)){
         std::cout<<"Error loading shader"<<std::endl;
     }
     if(!m_shapeClipperShader.loadFromFile("assets/shaders/shape_clipper.frag",sf::Shader::Fragment)){
         std::cout<<"Error loading shape shader"<<std::endl;
     }
+    if (!m_menuButtonTexture.loadFromFile("assets/pictures/MenuIcon.png")){
+    std::cout<<"Error loading menu icon texture!"<<std::endl;
+    }
+    if (!m_hintButtonTexture.loadFromFile("assets/pictures/HintIcon.png")){
+    std::cout<<"Error loading hint icon texture!"<<std::endl;
+    }    
+
+    m_menuButtonIcon.setTexture(m_menuButtonTexture);
+    m_menuButtonIcon.setScale(0.06f,0.06f);//縦横半分の大きさに
+    sf::FloatRect menuIconBounds=m_menuButtonIcon.getLocalBounds();
+    m_menuButtonIcon.setOrigin(menuIconBounds.width/2.0f,menuIconBounds.height/2.0f);
+
+    m_hintButtonIcon.setTexture(m_hintButtonTexture);
+    m_hintButtonIcon.setScale(0.15f,0.15f);//縦横半分の大きさに
+    sf::FloatRect hintIconBounds=m_hintButtonIcon.getLocalBounds();
+    m_hintButtonIcon.setOrigin(hintIconBounds.width/2.0f,hintIconBounds.height/2.0f);
 }
 
 void GameUI::showHint(sf::Vector2i pos){
@@ -464,12 +437,15 @@ void GameUI::deleteHint(){
 void GameUI::Draw(sf::RenderWindow& window, GameState currentState)const{
     if(currentState==GameState::Playing){
         window.draw(menuButtonShape);
-        window.draw(menuButtonText);
+        //window.draw(menuButtonText);
         window.draw(timeDisplayShape);
         window.draw(timeBoxText);
         window.draw(timeDisplayText);
         window.draw(hintButtonShape);
-        window.draw(hintButtonText);
+        //window.draw(hintButtonText);
+        window.draw(m_hintButtonIcon);
+        window.draw(m_menuButtonIcon);
+
         //ヒントボタン押したとき
         if(m_isShowingHint){
             window.draw(m_hintHighlight);
@@ -572,7 +548,7 @@ void GameUI::updateHoverState(const sf::Vector2i& mousePos,GameState currentStat
         float time=m_hoverClock.getElapsedTime().asSeconds();
         float amplitude=5.0f;
         float velocity=5.0f;
-        float yOffset=std::sin(time*amplitude)*velocity;//
+        float yOffset=std::sin(time*amplitude)*velocity;
     //Easyのホバー
         if(isEasyButtonClicked(mousePos)){
             easyButtonShape.setScale(1.05f,1.05f);
@@ -585,7 +561,7 @@ void GameUI::updateHoverState(const sf::Vector2i& mousePos,GameState currentStat
             easyButtonShape.setPosition(m_initialEasyButtonPos.x, m_initialEasyButtonPos.y + yOffset);
             m_reverseColorEasyButtonShape.setPosition(m_initialEasyButtonPos.x, m_initialEasyButtonPos.y + yOffset);
 
-            m_overColorEasyShape.setScale(1.05f,1.05f);
+            //m_overColorEasyShape.setScale(1.05f,1.05f);
         }else{
             m_isEasyButtonHovered=false;
             easyButtonShape.setScale(1.0f,1.0f);
@@ -639,6 +615,9 @@ void GameUI::updateHoverState(const sf::Vector2i& mousePos,GameState currentStat
             m_hoverClock.restart();
         }
     }
+    if(currentState==GameState::Playing){
+        //ヒント、メニューボタンのホバーを実装したい
+    }
 }
 
 void GameUI::createBackgroundGrid(unsigned int windowWodth,unsigned int windowHeight,int spacing){
@@ -670,7 +649,18 @@ bool GameUI::isGoTitleButtonClicked(const sf::Vector2i& mousePos)const{
 }
 
 bool GameUI::isMenuButtonClicked(const sf::Vector2i& mousePos)const{
-    return menuButtonShape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    //1.円の中心座標を取得
+    sf::Vector2f circleCenter=menuButtonShape.getPosition();
+
+    //2.マウス座標と円の中心との、X座標とY座標の差を計算
+    float dx=static_cast<float>(mousePos.x)-circleCenter.x;
+    float dy=static_cast<float>(mousePos.y)-circleCenter.y;
+
+    //3.三平方の定理で、2点間の距離を計算
+    float distance=std::sqrt(dx*dx + dy*dy);
+
+    //4.距離が円の半径よりも小さいなら、クリックは円の内側にある
+    return distance < menuButtonShape.getRadius();
 }
 
 bool GameUI::isContinueButtonClicked(const sf::Vector2i& mousePos)const{
