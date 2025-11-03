@@ -4,4 +4,3 @@ build/
 *.dll
 .vscode/
 actions-runner/
-actions-runner/
