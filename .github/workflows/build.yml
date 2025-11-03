@@ -1,0 +1,75 @@
+name: Build SFML MyMineSweeper
+
+on:
+  push:
+    branches: ["main"] # pushで自動実行
+  workflow_dispatch: # 手動実行も許可
+
+jobs:
+  build-windows:
+    # 新しく登録したランナー (C:\sfml-runner) で実行
+    runs-on: self-hosted
+
+    steps:
+      # 1. コードをダウンロード
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. C++コードをコンパイル
+      - name: Compile C++ Code (g++)
+        # g++ (msys2) を使うため、Git Bash の 'bash' を指定
+        shell: bash
+        run: |
+          echo "Starting SFML build..."
+
+          # --- ★ あなたのPC環境に合わせてパスを編集してください ★ ---
+
+          # 1. (オプション) g++ へのパス
+          #    もし 'bash: command not found' や 'g++: command not found' が出る場合、
+          #    MSYS2 の g++ がある場所のパスを通します (例↓)
+          # export PATH="/c/msys64/ucrt64/bin:$PATH" 
+
+          # 2. SFMLライブラリのパス (あなたのPCの絶対パス)
+          SFML_INCLUDE_PATH="C:/sfml/include" # ★ 例: SFMLをインストールした場所の include
+          SFML_LIB_PATH="C:/sfml/lib"       # ★ 例: SFMLをインストールした場所の lib
+
+          # 3. SFMLの DLL があるパス (実行に必要)
+          SFML_DLL_PATH="C:/sfml/bin"       # ★ 例: SFMLをインストールした場所の bin
+
+          # 4. コンパイル対象のソースファイル
+          #    (もし 'Source' フォルダに入れているなら "Source/*.cpp")
+          SOURCE_FILES="*.cpp"               # ★ 例: "main.cpp" や "MyMineSweeper/*.cpp" など
+
+          # 5. 出力先
+          OUTPUT_DIR="build"
+          OUTPUT_EXE="$OUTPUT_DIR/MyMineSweeper.exe"
+
+          # --- ここから下は編集不要 ---
+
+          # 出力先フォルダを作成
+          mkdir -p $OUTPUT_DIR
+
+          # g++ ビルドコマンドの実行
+          echo "Compiling $SOURCE_FILES..."
+          g++ $SOURCE_FILES -o $OUTPUT_EXE -I"$SFML_INCLUDE_PATH" -L"$SFML_LIB_PATH" -lsfml-graphics -lsfml-window -lsfml-system
+
+          # ビルド失敗時にCIを停止
+          if [ $? -ne 0 ]; then
+            echo "::error::Compile failed!"
+            exit 1
+          fi
+
+          echo "Build finished: $OUTPUT_EXE"
+
+          # 6. 必要なDLLをビルドフォルダにコピー (ゲームの実行に必要)
+          echo "Copying SFML DLLs..."
+          cp "$SFML_DLL_PATH"/*.dll "$OUTPUT_DIR/"
+
+          echo "DLLs copied."
+
+      # 3. 成果物 (.exe と .dll) をzipでアップロード
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Build
+          path: build/ # build フォルダ全体 (exeとdllが含まれる)
