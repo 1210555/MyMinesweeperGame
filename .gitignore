@@ -3,4 +3,5 @@ build/
 *.o
 *.dll
 .vscode/
-minesweeper-runner/
+actions-runner/
+actions-runner/
