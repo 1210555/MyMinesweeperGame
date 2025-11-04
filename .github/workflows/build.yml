@@ -17,8 +17,11 @@ jobs:
 
       # 2. C++コードをコンパイル
       - name: Compile C++ Code (g++)
-        # ★ 解決策: shell を 'bash' ではなく 'cmd' に変更
+        # ★ shell は 'cmd' のまま
         shell: cmd
+
+        # ★ run: の中身を、'::' (cmdのコメント) や '%' (cmdの変数) を使う
+        #    以下の cmd 形式スクリプトに丸ごと差し替える
         run: |
           echo "Starting SFML build..."
 
@@ -41,27 +44,26 @@ jobs:
           :: 5. 出力先
           set OUTPUT_DIR=build
 
-          # --- ここから下は編集不要 ---
+          :: --- ここから下は編集不要 (cmd形式に翻訳済み) ---
 
-          # 出力先フォルダを作成
-          mkdir -p $OUTPUT_DIR
+          :: 出力先フォルダを作成
+          mkdir %OUTPUT_DIR% 2>NUL || echo build folder already exists.
 
-          # ★ 解決策2: あなたが提示した「正解のビルドコマンド」に修正
-          #    (出力先を $OUTPUT_DIR/MyMinesweeper にし、-lsfml-audio を追加)
+          :: g++ ビルドコマンドの実行
           echo "Compiling..."
-          g++ src/main.cpp src/Game.cpp src/Field.cpp src/GameUI.cpp src/GameRenderer.cpp src/SoundManager.cpp src/Solver.cpp -o $OUTPUT_DIR/MyMinesweeper -I"$SFML_INCLUDE_PATH" -L"$SFML_LIB_PATH" -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+          g++ %SOURCE_FILES% -o %OUTPUT_DIR%\MyMinesweeper.exe -I"%SFML_INCLUDE_PATH%" -L"%SFML_LIB_PATH%" -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-          # ビルド失敗時にCIを停止
-          if [ $? -ne 0 ]; then
-            echo "::error::Compile failed!"
-            exit 1
-          fi
+          :: ビルド失敗時にCIを停止 (cmdの書き方)
+          if %ERRORLEVEL% neq 0 (
+            echo ::error::Compile failed!
+            exit /b 1
+          )
 
-          echo "Build finished: $OUTPUT_DIR/MyMinesweeper"
+          echo "Build finished: %OUTPUT_DIR%\MyMinesweeper.exe"
 
-          # 6. 必要なDLLをビルドフォルダにコピー (ゲームの実行に必要)
+          :: 6. 必要なDLLをビルドフォルダにコピー
           echo "Copying SFML DLLs..."
-          cp "$SFML_DLL_PATH"/*.dll "$OUTPUT_DIR/"
+          copy /Y "%SFML_DLL_PATH%\*.dll" "%OUTPUT_DIR%\"
 
           echo "DLLs copied."
 
