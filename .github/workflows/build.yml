@@ -25,18 +25,17 @@ jobs:
         run: |
           echo "Starting SFML build..."
 
-          :: --- ★ あなたのPC環境に合わせてパスを編集してください ★ ---
+          :: --- ★ MSYS2/UCRT64 の環境に合わせてパスを修正 ★ ---
 
-          :: 1. g++ へのパスを通します (MSYS2 UCRT64 の例)
-          ::    (g++.exe が C:\msys64\ucrt64\bin にあると仮定)
+          :: 1. g++ と SFMLのDLL がある場所へのパスを通します
           set PATH=C:\msys64\ucrt64\bin;%PATH%
 
-          :: 2. SFMLライブラリのパス (Windows形式のパス)
-          set SFML_INCLUDE_PATH=C:\sfml\include
-          set SFML_LIB_PATH=C:\sfml\lib
+          :: 2. SFMLライブラリのパス
+          set SFML_INCLUDE_PATH=C:\msys64\ucrt64\include
+          set SFML_LIB_PATH=C:\msys64\ucrt64\lib
 
-          :: 3. SFMLの DLL があるパス
-          set SFML_DLL_PATH=C:\sfml\bin
+          :: 3. SFMLの DLL があるパス (PATHと同じ)
+          set SFML_DLL_PATH=C:\msys64\ucrt64\bin
 
           :: 4. コンパイル対象のソースファイル
           set SOURCE_FILES=src\main.cpp src\Game.cpp src\Field.cpp src\GameUI.cpp src\GameRenderer.cpp src\SoundManager.cpp src\Solver.cpp
@@ -44,7 +43,7 @@ jobs:
           :: 5. 出力先
           set OUTPUT_DIR=build
 
-          :: --- ここから下は編集不要 (cmd形式に翻訳済み) ---
+          :: --- ここから下は編集不要 ---
 
           :: 出力先フォルダを作成
           mkdir %OUTPUT_DIR% 2>NUL || echo build folder already exists.
@@ -53,7 +52,7 @@ jobs:
           echo "Compiling..."
           g++ %SOURCE_FILES% -o %OUTPUT_DIR%\MyMinesweeper.exe -I"%SFML_INCLUDE_PATH%" -L"%SFML_LIB_PATH%" -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-          :: ビルド失敗時にCIを停止 (cmdの書き方)
+          :: ビルド失敗時にCIを停止
           if %ERRORLEVEL% neq 0 (
             echo ::error::Compile failed!
             exit /b 1
@@ -63,7 +62,7 @@ jobs:
 
           :: 6. 必要なDLLをビルドフォルダにコピー
           echo "Copying SFML DLLs..."
-          copy /Y "%SFML_DLL_PATH%\*.dll" "%OUTPUT_DIR%\"
+          copy /Y "%SFML_DLL_PATH%\sfml-*.dll" "%OUTPUT_DIR%\"
 
           echo "DLLs copied."
 
