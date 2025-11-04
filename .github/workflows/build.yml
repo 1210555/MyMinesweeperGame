@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Starting SFML build..."
 
-          :: --- ★ MSYS2/UCRT64 の環境に合わせてパスを修正 ★ ---
+          :: --- MSYS2/UCRT64 の環境に合わせてパスを修正 ---
 
           :: 1. g++ と SFMLのDLL がある場所へのパスを通します
           set PATH=C:\msys64\ucrt64\bin;%PATH%
@@ -62,7 +62,9 @@ jobs:
 
           :: 6. 必要なDLLをビルドフォルダにコピー
           echo "Copying SFML DLLs..."
-          copy /Y "%SFML_DLL_PATH%\sfml-*.dll" "%OUTPUT_DIR%\"
+
+          :: ★★★ ここのファイル名パターンを修正 ★★★
+          copy /Y "%SFML_DLL_PATH%\libsfml-*-2.dll" "%OUTPUT_DIR%\"
 
           echo "DLLs copied."
 
