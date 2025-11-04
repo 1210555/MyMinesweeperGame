@@ -17,27 +17,29 @@ jobs:
 
       # 2. C++コードをコンパイル
       - name: Compile C++ Code (g++)
-        # ★ 解決策1: 'bash' ではなく、Git Bash本体のフルパスを指定します
-        #   (Gitのインストール先が "C:\Program Files\Git" の場合)
-        shell: 'C:\Program Files\Git\bin\bash.exe -e {0}'
+        # ★ 解決策: shell を 'bash' ではなく 'cmd' に変更
+        shell: cmd
         run: |
           echo "Starting SFML build..."
 
-          # --- ★ あなたのPC環境に合わせてパスを編集してください ★ ---
+          :: --- ★ あなたのPC環境に合わせてパスを編集してください ★ ---
 
-          # 1. (オプション) g++ へのパス
-          #    (もし 'g++: command not found' が出たら、この行の # を外す)
-          # export PATH="/c/msys64/ucrt64/bin:$PATH" 
+          :: 1. g++ へのパスを通します (MSYS2 UCRT64 の例)
+          ::    (g++.exe が C:\msys64\ucrt64\bin にあると仮定)
+          set PATH=C:\msys64\ucrt64\bin;%PATH%
 
-          # 2. SFMLライブラリのパス (あなたのPCの絶対パス)
-          SFML_INCLUDE_PATH="C:/sfml/include" # ★ あなたの環境に合わせる
-          SFML_LIB_PATH="C:/sfml/lib"       # ★ あなたの環境に合わせる
+          :: 2. SFMLライブラリのパス (Windows形式のパス)
+          set SFML_INCLUDE_PATH=C:\sfml\include
+          set SFML_LIB_PATH=C:\sfml\lib
 
-          # 3. SFMLの DLL があるパス (実行に必要)
-          SFML_DLL_PATH="C:/sfml/bin"       # ★ あなたの環境に合わせる
+          :: 3. SFMLの DLL があるパス
+          set SFML_DLL_PATH=C:\sfml\bin
 
-          # 4. 出力先
-          OUTPUT_DIR="build"
+          :: 4. コンパイル対象のソースファイル
+          set SOURCE_FILES=src\main.cpp src\Game.cpp src\Field.cpp src\GameUI.cpp src\GameRenderer.cpp src\SoundManager.cpp src\Solver.cpp
+
+          :: 5. 出力先
+          set OUTPUT_DIR=build
 
           # --- ここから下は編集不要 ---
 
